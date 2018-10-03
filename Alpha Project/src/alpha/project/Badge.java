@@ -8,7 +8,21 @@ package alpha.project;
 /**
  *
  * @author Adam
+ * Last updated: 10/3/18
  */
 public class Badge {
-    
+    private String description;
+    private int id;
+    public Badge(int id, String d) {
+        description = d;
+        this.id = id;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getId() {
+        return id;
+    }
 }
