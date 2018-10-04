@@ -18,6 +18,14 @@ public class Badge {
         this.id = id;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getDescription() {
         return description;
     }
