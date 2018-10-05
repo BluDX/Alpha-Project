@@ -17,6 +17,11 @@ public class Badge {
         description = d;
         this.id = id;
     }
+    
+    @Override
+    public String toString(){
+        return Integer.toString(id) + " " + description;
+    }
 
     public void setDescription(String description) {
         this.description = description;

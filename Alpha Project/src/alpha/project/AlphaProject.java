@@ -10,6 +10,11 @@ public class AlphaProject {
         //Adam Testing
         //Dinorah Testing
         //Hunter Testing
+        Badge badgeTest = new Badge(102, "Schmoe, Joe");
+        Punch punchTest = new Punch(badgeTest, 103, 1);
+        
+        System.out.println(punchTest.printOriginalTimestamp());
+        System.out.println(badgeTest.toString());
     }
     
 }

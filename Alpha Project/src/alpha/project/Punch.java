@@ -24,6 +24,9 @@ public class Punch {
         this.terminalid = terminalid;
         this.punchtypeid = punchtypeid;
     }
+    public String printOriginalTimestamp() {
+        return originaltime.getTime().toString();
+    }
 
     public int getId() {
         return id;
