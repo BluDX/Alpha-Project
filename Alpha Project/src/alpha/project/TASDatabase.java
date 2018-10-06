@@ -1,9 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package alpha.project;
+import java.sql.*;
+
 
 /**
  *
@@ -13,13 +10,36 @@ public class TASDatabase {
     //CONSTRUCTOR
     public TASDatabase() {
         //Should establish a connection to the database
+        Class.forName("com.mysql.jdbc.Driver").newInstance();
+        
+        //Identify the source
+        String url = "jdbc:mysql://localhost/tas";
+        
+        //Allocate a connection
+        Connection conn = DriverManager.getConnection(url, "tasuser", "ScrumBitches");
+        
+        //Allocate a Statement object:
+        Statement stmt = conn.createStatement();
+
+
     }
     public void close() {
         //Should close the connection to the database
+        result.close();
+        stmt.close();
+        conn.close();
+
     }
     public Punch getPunch(int id) {
         //Accepts the ID of the punch, Querys the database for the corresponding Punch, use this information to populate a new punch, then return that punch
-        return null;
+        ResultSet result = stmt.executeQuery("SELECT * FROM punch WHERE id='id'");
+        
+        if ( result != null ){
+            result.next();
+            Badge b = result;
+        }
+        else
+            return null;
     }
     public Badge getBadge(int id) {
         //Querys for the corresponding badge, creates the badge object, then returns it
