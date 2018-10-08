@@ -8,9 +8,9 @@ package alpha.project;
 /**
  *
  * @author Amber
- *  toString
- * description, shiftstart, shiftstop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct > convert gregorian calendar. "constructor that accepts all the thingies" - Adam
- */  
+* TODO: toString, gregorian calendar conversion
+* description, shiftstart, shiftstop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct
+*/  
 
 public class Shift {
     
@@ -85,6 +85,7 @@ public class Shift {
 
     public void setLunchStart(long lunchStart) {
         this.lunchStart = lunchStart;
+
     }
 
     // lunchStop
@@ -120,4 +121,3 @@ public class Shift {
     
     
 }
-
