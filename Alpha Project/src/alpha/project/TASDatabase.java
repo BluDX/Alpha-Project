@@ -59,7 +59,7 @@ public class TASDatabase {
         }catch(Exception ex){System.out.println(ex);}
         return null;
     }
-    public Badge getBadge(int id) {
+    public Badge getBadge(String id) {
         try{
         //Querys for the corresponding badge, creates the badge object, then returns it
         result = stmt.executeQuery("SELECT * FROM badge WHERE id='id'");
