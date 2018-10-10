@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 public class Punch {
     private int id = 0;
     private int terminalid;
-    private int badgeid;
+    private String badgeid;
     private GregorianCalendar originaltime = new GregorianCalendar();
     private GregorianCalendar adjustedtime = null;
     private int punchtypeid;
@@ -44,11 +44,11 @@ public class Punch {
         this.terminalid = terminalid;
     }
 
-    public int getBadgeid() {
+    public String getBadgeid() {
         return badgeid;
     }
 
-    public void setBadgeid(int badgeid) {
+    public void setBadgeid(String badgeid) {
         this.badgeid = badgeid;
     }
 
@@ -75,4 +75,5 @@ public class Punch {
     public void setPunchtypeid(int punchtypeid) {
         this.punchtypeid = punchtypeid;
     }
+
 }
