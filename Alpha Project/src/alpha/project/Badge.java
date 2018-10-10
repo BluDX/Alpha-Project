@@ -12,22 +12,22 @@ package alpha.project;
  */
 public class Badge {
     private String description;
-    private int id;
-    public Badge(int id, String d) {
+    private String id;
+    public Badge(String id, String d) {
         description = d;
         this.id = id;
     }
     
     @Override
     public String toString(){
-        return Integer.toString(id) + " " + description;
+        return id + " " + description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -35,7 +35,7 @@ public class Badge {
         return description;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 }
