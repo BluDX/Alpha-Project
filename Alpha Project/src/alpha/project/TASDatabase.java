@@ -46,7 +46,7 @@ public class TASDatabase {
     public Punch getPunch(int id) {
         try{
         //Accepts the ID of the punch, Querys the database for the corresponding Punch, use this information to populate a new punch, then return that punch
-        result = stmt.executeQuery("SELECT * FROM punch WHERE id='id'");
+        result = stmt.executeQuery("SELECT * FROM punch WHERE id =" + id);
         
         if ( result != null ){
             result.next();
@@ -63,7 +63,7 @@ public class TASDatabase {
     public Badge getBadge(String id) {
         try{
         //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM badge WHERE id='id'");
+        result = stmt.executeQuery("SELECT * FROM badge WHERE id = "+ id);
         
         if ( result != null ){
             result.next();
@@ -81,7 +81,7 @@ public class TASDatabase {
     public Shift getShift(int id) {
         try{
         //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM shift WHERE id='id'");
+        result = stmt.executeQuery("SELECT * FROM shift WHERE id="+id);
         
         if ( result != null ){
             result.next();
@@ -99,7 +99,7 @@ public class TASDatabase {
     public Shift getShift(Badge badge) {
         try{
         //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM shift WHERE badge='badge'");
+        result = stmt.executeQuery("SELECT * FROM shift WHERE badge="+badge);
         
         if ( result != null ){
             result.next();
