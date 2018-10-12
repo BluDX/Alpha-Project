@@ -1,123 +1,114 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package alpha.project;
 
 /**
  *
- * @author Amber
+* @author Amber
+* timestamp fields used for punch date and time, time fields for shift/lunch start/stop
+* UNIX_TIMESTAMP
+* value returned by MySQL should be multiplied by 1000
 * TODO: toString, gregorian calendar conversion
+* need to create calendar object for all longs?
 * description, shiftstart, shiftstop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct
+* added: lunchLength, shiftLength, shiftID
+* lunch/shiftlength replaced with elapsed time
 */  
 
+
+
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
 public class Shift {
+    private int id, interval, gracePeriod, dock, lunchDeduct;
+    private String description;
+    private Timestamp start, stop, lunchStart, lunchStop;
     
-    String shiftDesc;
-    long shiftStart;
-    long shiftStop;
-    int interval;
-    int gracePeriod;
-    int dock;
-    long lunchStart;
-    long lunchStop;
-    int lunchDeduct;
+    public Shift(int id, int interval, int gracePeriod, int dock, int lunchDeduct, int maxTime, int overtimeThreshold,
+                 String description, Timestamp start, Timestamp stop, Timestamp lunchStart, Timestamp lunchStop){
+        this.id = id;
+        this.interval = interval;
+        this.gracePeriod = gracePeriod;
+        this.dock = dock;
+        this.lunchDeduct = lunchDeduct;
+        this.description = description;
+        this.start = start;
+        this.stop = stop;
+        this.lunchStart = lunchStart;
+        this.lunchStop = lunchStop;
+    }
     
-    // Getters and setters
-    public String getShiftDesc() {
-        return shiftDesc;
+    // getters and setters
+
+    public int getId() {
+        return id;
     }
 
-    public void setShiftDesc(String shiftDesc) {
-        this.shiftDesc = shiftDesc;
-    }
-
-    // shiftStart
-    public long getShiftStart() {
-        return shiftStart;
-    }
-
-    public void setShiftStart(long shiftStart) {
-        this.shiftStart = shiftStart;
-    }
-
-    // shiftStop
-    public long getShiftStop() {
-        return shiftStop;
-    }
-
-    public void setShiftStop(long shiftStop) {
-        this.shiftStop = shiftStop;
-    }
-
-    // interval
     public int getInterval() {
         return interval;
     }
 
-    public void setInterval(int interval) {
-        this.interval = interval;
-    }
-
-    //gracePeriod
     public int getGracePeriod() {
         return gracePeriod;
     }
 
-    public void setGracePeriod(int gracePeriod) {
-        this.gracePeriod = gracePeriod;
-    }
-
-    // dock
     public int getDock() {
         return dock;
     }
 
-    public void setDock(int dock) {
-        this.dock = dock;
-    }
-
-    //lunchStart
-    public long getLunchStart() {
-        return lunchStart;
-    }
-
-    public void setLunchStart(long lunchStart) {
-        this.lunchStart = lunchStart;
-
-    }
-
-    // lunchStop
-    public long getLunchStop() {
-        return lunchStop;
-    }
-
-    public void setLunchStop(long lunchStop) {
-        this.lunchStop = lunchStop;
-    }
-
-    // lunchDeduct
     public int getLunchDeduct() {
         return lunchDeduct;
     }
 
-    public void setLunchDeduct(int lunchDeduct) {
-        this.lunchDeduct = lunchDeduct;
+    public String getDescription() {
+        return description;
     }
 
-    public Shift(String shiftDesc, long shiftStart, long shiftStop, int interval, int gracePeriod, int dock, long lunchStart, long lunchStop, int lunchDeduct) {
-        this.shiftDesc = shiftDesc;
-        this.shiftStart = shiftStart;
-        this.shiftStop = shiftStop;
-        this.interval = interval;
-        this.gracePeriod = gracePeriod;
-        this.dock = dock;
-        this.lunchStart = lunchStart;
-        this.lunchStop = lunchStop;
-        this.lunchDeduct = lunchDeduct;
+    public Timestamp getStart() {
+        return start;
     }
 
+    public Timestamp getStop() {
+        return stop;
+    }
+
+    public Timestamp getLunchStart() {
+        return lunchStart;
+    }
+
+    public Timestamp getLunchStop() {
+        return lunchStop;
+    }
     
+    // long cannot be converted to greg calendar; should be string
+    // 60 * 1000
     
+    private long getElapsedTime(Timestamp s, Timestamp e){
+        Calendar startCal = GregorianCalendar.getInstance();
+        Calendar endCal = GregorianCalendar.getInstance();
+        startCal.setTimeInMillis(s.getTime());
+        endCal.setTimeInMillis(e.getTime());
+        long initial, ending;
+        initial = startCal.getTimeInMillis();
+        ending = endCal.getTimeInMillis();
+        return (ending - initial)/60000;
+    }
+
+    @Override
+    public String toString() {
+        String data = "";
+        String startTime = (new SimpleDateFormat("HH:mm")).format(start.getTime());
+        String stopTime = (new SimpleDateFormat("HH:mm")).format(stop.getTime());
+        String lunchStartTime = (new SimpleDateFormat("HH:mm")).format(lunchStart.getTime());
+        String lunchStopTime = (new SimpleDateFormat("HH:mm")).format(lunchStop.getTime());
+        data += description + ": ";
+        data += startTime + " - ";
+        data += stopTime + " (";
+        data += getElapsedTime(start, stop) + " minutes);";
+        data += " Lunch: " + lunchStartTime + " - ";
+        data += lunchStopTime + " (";
+        data += getElapsedTime(lunchStart, lunchStop) + " minutes)";
+        return data;
+    }
 }

@@ -1,5 +1,6 @@
 package alpha.project;
 
+
 public class AlphaProject {
 
     public static void main(String[] args) {
@@ -10,6 +11,18 @@ public class AlphaProject {
         //Adam Testing
         //Dinorah Testing
         //Hunter Testing
+        
+        // shift test. pls work
+        TASDatabase db = new TASDatabase();
+
+        Shift s1 = db.getShift(1);
+        Shift s2 = db.getShift(2);
+        Shift s3 = db.getShift(3);
+        
+        System.out.println(s1.toString());
+        System.out.println(s2.toString());
+        System.out.println(s3.toString());
+        
         Badge badgeTest = new Badge("ABCDEFG", "Schmoe, Joe");
         Punch punchTest = new Punch(badgeTest, 103, 1);
         
