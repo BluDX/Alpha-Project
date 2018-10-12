@@ -56,8 +56,9 @@ public class TASDatabase {
         else
             return null;
        
-        }catch(Exception ex){System.out.println(ex);}
-        return null;
+        }catch(Exception ex){System.out.println(ex);
+            return null;}
+        
     }
     public Badge getBadge(String id) {
         try{
@@ -72,8 +73,9 @@ public class TASDatabase {
         else
             return null;
        
-        }catch(Exception ex){System.out.println(ex);}
-        return null;
+        }catch(Exception ex){System.out.println(ex);
+        return null;}
+        
     
     }
     public Shift getShift(int id) {
@@ -89,9 +91,10 @@ public class TASDatabase {
         else
             return null;
        
-        }catch(Exception ex){System.out.println(ex);}
+        }catch(Exception ex){System.out.println(ex);
+        return null;}
         //Querys for the corresponding shift, creates the object, returns it
-        return null;
+        
     }
     public Shift getShift(Badge badge) {
         try{
@@ -106,8 +109,9 @@ public class TASDatabase {
         else
             return null;
        
-        }catch(Exception ex){System.out.println(ex);}
+        }catch(Exception ex){System.out.println(ex);
+        return null;}
         //Querys for the corresponding shift by its badge, creates the object, then returns it
-        return null;
+        
     }
 }
