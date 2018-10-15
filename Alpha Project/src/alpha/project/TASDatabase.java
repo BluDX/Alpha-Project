@@ -51,7 +51,7 @@ public class TASDatabase {
         Punch p = null;
         try{
       
-        String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS ts FROM punch WHERE id = " + id;
+        String query = "SELECT * FROM punch WHERE id = " + id;
         
             try (Statement st = conn.createStatement()) {
                 ResultSet rs = st.executeQuery(query);
@@ -61,11 +61,10 @@ public class TASDatabase {
                     int Id = rs.getInt("id");
                     int terminalId = rs.getInt("terminalid");
                     String badgeId = rs.getString("badgeid");
-                    long timeStamp = rs.getLong("ts");
                     int punchTypeId = rs.getInt("punchtypeid");
-                   
+                    Badge b = getBadge(badgeId);
                     //Need to create a punch and to create a punch I need a badge
-                    p = new Punch(Id, timeStamp, terminalId, badgeId, punchTypeId);
+                    p = new Punch(b, terminalId, punchTypeId);
                 }
             }
         }catch(SQLException ex){
@@ -74,22 +73,31 @@ public class TASDatabase {
      return p;   
     }
     public Badge getBadge(String id) {
-        try{
+        
+        Badge b = null;
+        try(Statement st = conn.createStatement()){
         //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM badge WHERE id = "+ id);
+         String query = "SELECT * FROM badge WHERE id = ?";
+         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         pstUpdate.setString(1, id);
+         ResultSet rs = st.executeQuery(query);
+         
+         while(rs.next()){
+                    String Id = rs.getString("id");
+                    String d = rs.getNString("description");
+                    
+                   
+                    //Need to create a punch and to create a punch I need a badge
+                    b = new Badge(Id,d);
+                }
         
-        if ( result != null ){
-            result.next();
-            Badge b = (Badge)result;
-            return b;
-        }
-        else
-            return null;
+      
        
-        }catch(Exception ex){System.out.println(ex);
-        return null;}
+        }catch(SQLException ex){
+            Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
-    
+    return b;
     }
     public Shift getShift(int id) {
         try{
