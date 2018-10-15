@@ -20,7 +20,7 @@ public class Badge {
     
     @Override
     public String toString(){
-        return id + " " + description;
+        return "#" + id + " " + "(" + description + ")";
     }
 
     public void setDescription(String description) {
