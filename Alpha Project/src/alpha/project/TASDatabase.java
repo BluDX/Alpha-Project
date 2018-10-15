@@ -63,14 +63,11 @@ public class TASDatabase {
                     String badgeId = rs.getString("badgeid");
                     long timeStamp = rs.getLong("ts");
                     int punchTypeId = rs.getInt("punchtypeid");
-                    
-                
+                   
+                    //Need to create a punch and to create a punch I need a badge
                     p = new Punch(Id, timeStamp, terminalId, badgeId, punchTypeId);
                 }
             }
-        
-       
-       
         }catch(SQLException ex){
             Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
             }
