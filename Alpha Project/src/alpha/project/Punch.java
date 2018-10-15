@@ -25,7 +25,20 @@ public class Punch {
         this.punchtypeid = punchtypeid;
     }
     public String printOriginalTimestamp() {
-        return originaltime.getTime().toString();
+        String msg;
+        switch (getPunchtypeid()) {
+            case 1:
+                msg = "#" + badgeid + "CLOCKED IN: " + originaltime.getTime().toString();
+                break;
+            case 0:
+                msg = "#" + badgeid + "CLOCKED OUT: " + originaltime.getTime().toString();
+                break;
+            default:
+                msg = "#" + badgeid + "TIMED OUT: " + originaltime.getTime().toString();
+                break;
+        }
+        
+        return msg;
     }
 
     public int getId() {
