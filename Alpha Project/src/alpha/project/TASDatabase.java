@@ -1,5 +1,8 @@
 package alpha.project;
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 
 
 /**
@@ -44,21 +47,34 @@ public class TASDatabase {
 
     }
     public Punch getPunch(int id) {
+        
+        Punch p = null;
         try{
-        //Accepts the ID of the punch, Querys the database for the corresponding Punch, use this information to populate a new punch, then return that punch
-        result = stmt.executeQuery("SELECT * FROM punch WHERE id =" + id);
+      
+        String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS ts FROM punch WHERE id = " + id;
         
-        if ( result != null ){
-            result.next();
-            Punch p = (Punch)result;
-            return p;
-        }
-        else
-            return null;
+            try (Statement st = conn.createStatement()) {
+                ResultSet rs = st.executeQuery(query);
+                
+                while (rs.next())
+                {
+                    int Id = rs.getInt("id");
+                    int terminalId = rs.getInt("terminalid");
+                    String badgeId = rs.getString("badgeid");
+                    long timeStamp = rs.getLong("ts");
+                    int punchTypeId = rs.getInt("punchtypeid");
+                    
+                
+                    p = new Punch(Id, timeStamp, terminalId, badgeId, punchTypeId);
+                }
+            }
+        
        
-        }catch(Exception ex){System.out.println(ex);
-            return null;}
-        
+       
+        }catch(SQLException ex){
+            Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
+            }
+     return p;   
     }
     public Badge getBadge(String id) {
         try{
