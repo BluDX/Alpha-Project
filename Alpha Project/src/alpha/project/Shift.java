@@ -30,8 +30,7 @@ public class Shift {
     
     
     
-    public Shift(int id, int interval, int gracePeriod, int dock, int lunchDeduct, int maxTime, int overtimeThreshold,
-                 String description, Timestamp start, Timestamp stop, Timestamp lunchStart, Timestamp lunchStop){
+    public Shift(int id, int interval, int gracePeriod, int dock, int lunchDeduct, String description, Timestamp start, Timestamp stop, Timestamp lunchStart, Timestamp lunchStop){
         this.id = id;
         this.interval = interval;
         this.gracePeriod = gracePeriod;
