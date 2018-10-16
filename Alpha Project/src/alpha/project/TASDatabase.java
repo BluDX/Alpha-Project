@@ -65,6 +65,7 @@ public class TASDatabase {
                     Badge b = getBadge(badgeId);
                     //Need to create a punch and to create a punch I need a badge
                     p = new Punch(b, terminalId, punchTypeId);
+                    //set original time to whatever it was
                 }
             }
         }catch(SQLException ex){
@@ -86,8 +87,7 @@ public class TASDatabase {
                     String Id = rs.getString("id");
                     String d = rs.getNString("description");
                     
-                   
-                    //Need to create a punch and to create a punch I need a badge
+
                     b = new Badge(Id,d);
                 }
         
@@ -100,39 +100,83 @@ public class TASDatabase {
     return b;
     }
     public Shift getShift(int id) {
-        try{
-        //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM shift WHERE id="+id);
+        Shift s = null;
+       try(Statement st = conn.createStatement()){
+         String query = "SELECT * FROM shift WHERE id = ?";
+         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         pstUpdate.setString(1, Integer.toString(id));
+         ResultSet rs = st.executeQuery(query);
+         
+         while(rs.next()){
+                    int Id = rs.getInt("id");
+                    int interval = rs.getInt("interval");
+                    int graceperiod = rs.getInt("graceperiod");
+                    int dock = rs.getInt("dock");
+                    int lunchdeduct = rs.getInt("lunchdeduct");
+                    long start = rs.getLong("start");
+                    long stop = rs.getLong("stop");
+                    long lunchstart = rs.getLong("lunchstart");
+                    long lunchstop = rs.getLong("lunchstop");
+                    String d = rs.getString("description");
+                    Timestamp star = new Timestamp(start);
+                    Timestamp sto = new Timestamp(stop);
+                    Timestamp lunchstar = new Timestamp(lunchstart);
+                    Timestamp lunchsto = new Timestamp(lunchstop);
+                    
+                   
+                    s = new Shift(Id,interval,graceperiod,dock,lunchdeduct,d,star,sto,lunchstar,lunchsto);
+                }
         
-        if ( result != null ){
-            result.next();
-            Shift s = (Shift)result;
-            return s;
-        }
-        else
-            return null;
+      
        
-        }catch(Exception ex){System.out.println(ex);
-        return null;}
+        }catch(SQLException ex){
+            Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        }
         //Querys for the corresponding shift, creates the object, returns it
-        
+    return s;
     }
     public Shift getShift(Badge badge) {
-        try{
-        //Querys for the corresponding badge, creates the badge object, then returns it
-        result = stmt.executeQuery("SELECT * FROM shift WHERE badge="+badge);
+        Shift s = null;
+        int shiftid = 0; //maybe shouldnt initialize to 0 - ask later
+       try(Statement st = conn.createStatement()){
+         String query = "SELECT * FROM employee WHERE id = ?";
+         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         pstUpdate.setString(1, badge.getId());
+         ResultSet rs = st.executeQuery(query);
+         
+         while(rs.next()){
+             shiftid = rs.getInt("shiftid");
+         }
+         
+         query = "SELECT * FROM shift WHERE id = ?";
+         pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         pstUpdate.setString(1, Integer.toString(shiftid));
+         while(rs.next()){
+                    int Id = rs.getInt("id");
+                    int interval = rs.getInt("interval");
+                    int graceperiod = rs.getInt("graceperiod");
+                    int dock = rs.getInt("dock");
+                    int lunchdeduct = rs.getInt("lunchdeduct");
+                    long start = rs.getLong("start");
+                    long stop = rs.getLong("stop");
+                    long lunchstart = rs.getLong("lunchstart");
+                    long lunchstop = rs.getLong("lunchstop");
+                    String d = rs.getString("description");
+                    Timestamp star = new Timestamp(start);
+                    Timestamp sto = new Timestamp(stop);
+                    Timestamp lunchstar = new Timestamp(lunchstart);
+                    Timestamp lunchsto = new Timestamp(lunchstop);
+                    
+                   
+                    s = new Shift(Id,interval,graceperiod,dock,lunchdeduct,d,star,sto,lunchstar,lunchsto);
+                }
         
-        if ( result != null ){
-            result.next();
-            Shift s = (Shift)result;
-            return s;
-        }
-        else
-            return null;
+      
        
-        }catch(Exception ex){System.out.println(ex);
-        return null;}
-        //Querys for the corresponding shift by its badge, creates the object, then returns it
-        
+        }catch(SQLException ex){
+            Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //Querys for the corresponding shift, creates the object, returns it
+    return s;
     }
 }
