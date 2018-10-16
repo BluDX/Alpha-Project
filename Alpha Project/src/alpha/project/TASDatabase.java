@@ -65,7 +65,7 @@ public class TASDatabase {
                     Badge b = getBadge(badgeId);
                     //Need to create a punch and to create a punch I need a badge
                     p = new Punch(b, terminalId, punchTypeId);
-                    //set original time to whatever it was
+                    //set original time to whatever it was with setter
                 }
             }
         }catch(SQLException ex){
@@ -78,14 +78,16 @@ public class TASDatabase {
         Badge b = null;
         try(Statement st = conn.createStatement()){
         //Querys for the corresponding badge, creates the badge object, then returns it
-         String query = "SELECT * FROM badge WHERE id = ?";
-         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         pstUpdate.setString(1, id);
+         String query = "SELECT * FROM badge WHERE id = " + "\"" + id + "\"";
+         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         //pstUpdate.setString(1, id);
          ResultSet rs = st.executeQuery(query);
-         
+         if (!(rs.next())) {
+             System.out.println("uh oh");
+         }
          while(rs.next()){
                     String Id = rs.getString("id");
-                    String d = rs.getNString("description");
+                    String d = rs.getString("description");
                     
 
                     b = new Badge(Id,d);
@@ -102,9 +104,9 @@ public class TASDatabase {
     public Shift getShift(int id) {
         Shift s = null;
        try(Statement st = conn.createStatement()){
-         String query = "SELECT * FROM shift WHERE id = ?";
-         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         pstUpdate.setString(1, Integer.toString(id));
+         String query = "SELECT * FROM shift WHERE id = " + Integer.toString(id);
+         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         //pstUpdate.setString(1, Integer.toString(id));
          ResultSet rs = st.executeQuery(query);
          
          while(rs.next()){
@@ -139,18 +141,19 @@ public class TASDatabase {
         Shift s = null;
         int shiftid = 0; //maybe shouldnt initialize to 0 - ask later
        try(Statement st = conn.createStatement()){
-         String query = "SELECT * FROM employee WHERE id = ?";
-         PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         pstUpdate.setString(1, badge.getId());
+         String query = "SELECT * FROM employee WHERE badgeid = " + badge.getId();
+         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         //pstUpdate.setString(1, badge.getId());
          ResultSet rs = st.executeQuery(query);
          
          while(rs.next()){
              shiftid = rs.getInt("shiftid");
          }
          
-         query = "SELECT * FROM shift WHERE id = ?";
-         pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         pstUpdate.setString(1, Integer.toString(shiftid));
+         query = "SELECT * FROM shift WHERE id = " + Integer.toString(shiftid);
+         //pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+         //pstUpdate.setString(1, Integer.toString(shiftid));
+         rs = st.executeQuery(query);
          while(rs.next()){
                     int Id = rs.getInt("id");
                     int interval = rs.getInt("interval");
