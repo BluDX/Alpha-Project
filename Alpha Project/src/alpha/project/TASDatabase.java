@@ -1,5 +1,6 @@
 package alpha.project;
 import java.sql.*;
+import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,7 +52,7 @@ public class TASDatabase {
         Punch p = null;
         try{
       
-        String query = "SELECT * FROM punch WHERE id = " + Integer.toString(id);
+        String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS ts FROM punch WHERE id = " + Integer.toString(id);
         
             try (Statement st = conn.createStatement()) {
                 ResultSet rs = st.executeQuery(query);
@@ -63,9 +64,13 @@ public class TASDatabase {
                     String badgeId = rs.getString("badgeid");
                     int punchTypeId = rs.getInt("punchtypeid");
                     Badge b = getBadge(badgeId);
+                    long time = rs.getLong("ts");
                     //Need to create a punch and to create a punch I need a badge
                     p = new Punch(b, terminalId, punchTypeId);
                     //set original time to whatever it was with setter
+                    GregorianCalendar origTime = new GregorianCalendar();
+                    origTime.setTimeInMillis(time);
+                    p.setOriginaltime(origTime);
                 }
             }
         }catch(SQLException ex){
