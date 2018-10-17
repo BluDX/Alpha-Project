@@ -51,7 +51,7 @@ public class TASDatabase {
         Punch p = null;
         try{
       
-        String query = "SELECT * FROM punch WHERE id = " + id;
+        String query = "SELECT * FROM punch WHERE id = " + Integer.toString(id);
         
             try (Statement st = conn.createStatement()) {
                 ResultSet rs = st.executeQuery(query);
@@ -82,9 +82,7 @@ public class TASDatabase {
          //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
          //pstUpdate.setString(1, id);
          ResultSet rs = st.executeQuery(query);
-         if (!(rs.next())) {
-             System.out.println("uh oh");
-         }
+
          while(rs.next()){
                     String Id = rs.getString("id");
                     String d = rs.getString("description");

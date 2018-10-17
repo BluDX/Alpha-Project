@@ -28,13 +28,13 @@ public class Punch {
         String msg;
         switch (getPunchtypeid()) {
             case 1:
-                msg = "#" + badgeid + "CLOCKED IN: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " CLOCKED IN: " + originaltime.getTime().toString();
                 break;
             case 0:
-                msg = "#" + badgeid + "CLOCKED OUT: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " CLOCKED OUT: " + originaltime.getTime().toString();
                 break;
             default:
-                msg = "#" + badgeid + "TIMED OUT: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " TIMED OUT: " + originaltime.getTime().toString();
                 break;
         }
         

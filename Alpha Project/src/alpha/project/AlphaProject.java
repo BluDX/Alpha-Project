@@ -27,9 +27,19 @@ public class AlphaProject {
         Badge b2 = db.getBadge("08D01475");
         Badge b3 = db.getBadge("D2CC71D4");
         
-        //System.out.println(b1.toString());
-        //System.out.println(b2.toString());
-        //System.out.println(b3.toString());
+        System.out.println(b1.toString());
+        System.out.println(b2.toString());
+        System.out.println(b3.toString());
+        
+        Punch p1 = db.getPunch(3433);
+        Punch p2 = db.getPunch(3325);
+        Punch p3 = db.getPunch(1963);
+        Punch p4 = db.getPunch(5702);
+        
+        System.out.println(p1.printOriginalTimestamp());
+        System.out.println(p2.printOriginalTimestamp());
+        System.out.println(p3.printOriginalTimestamp());
+        System.out.println(p4.printOriginalTimestamp());
         //Badge badgeTest = new Badge("ABCDEFG", "Schmoe, Joe");
         //Punch punchTest = new Punch(badgeTest, 103, 1);
         
