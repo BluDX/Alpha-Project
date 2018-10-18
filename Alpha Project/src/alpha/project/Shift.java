@@ -4,6 +4,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.time.LocalDate;
 
 /**
  *
@@ -21,16 +22,23 @@ import java.util.GregorianCalendar;
 * String id = resultset.getString();
 * String desc = resultset.getstring(2);
 * Badge b = new Badge (id, desc)
+* 
+* gc.setTimeInMillis(ts);
+* SimpleDateFormat
+* Date d = gc.getTime(); > would then be an input for sdf;
+* sdf.format(d);
+* 
+* change timestamps to localTime; isBefore and isAfter (compare local times to see which occurs before or after). ß
 */  
 
 public class Shift {
     private int id, interval, gracePeriod, dock, lunchDeduct;
     private String description;
-    private Timestamp shiftStart, shiftStop, lunchStart, lunchStop;
+    private Time shiftStart, shiftStop, lunchStart, lunchStop;
     
     
     
-    public Shift(int id, int interval, int gracePeriod, int dock, int lunchDeduct, String description, Timestamp start, Timestamp stop, Timestamp lunchStart, Timestamp lunchStop){
+    public Shift(int id, int interval, int gracePeriod, int dock, int lunchDeduct, String description, Time start, Time stop, Time lunchStart, Time lunchStop){
         this.id = id;
         this.interval = interval;
         this.gracePeriod = gracePeriod;
@@ -69,19 +77,19 @@ public class Shift {
         return description;
     }
 
-    public Timestamp getShiftStart() {
+    public Time getShiftStart() {
         return shiftStart;
     }
 
-    public Timestamp getShiftStop() {
+    public Time getShiftStop() {
         return shiftStop;
     }
 
-    public Timestamp getLunchStart() {
+    public Time getLunchStart() {
         return lunchStart;
     }
 
-    public Timestamp getLunchStop() {
+    public Time getLunchStop() {
         return lunchStop;
     }
     
@@ -89,7 +97,7 @@ public class Shift {
     // 60 * 1000
     
     // get times
-    private long getElapsedTime(Timestamp s, Timestamp e){
+    private long getElapsedTime(Time s, Time e){
         Calendar startCal = GregorianCalendar.getInstance();
         Calendar endCal = GregorianCalendar.getInstance();
         startCal.setTimeInMillis(s.getTime());
