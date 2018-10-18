@@ -40,7 +40,7 @@ public class Punch {
                 break;
         }
         
-        return msg;
+        return msg.toUpperCase();
     }
 
     public int getId() {

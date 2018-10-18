@@ -141,7 +141,7 @@ public class TASDatabase {
         Shift s = null;
         int shiftid = 0; //maybe shouldnt initialize to 0 - ask later
        try(Statement st = conn.createStatement()){
-         String query = "SELECT * FROM employee WHERE badgeid = " + badge.getId();
+         String query = "SELECT * FROM employee WHERE badgeid = " + "\"" + badge.getId() + "\"";
          //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
          //pstUpdate.setString(1, badge.getId());
          ResultSet rs = st.executeQuery(query);
