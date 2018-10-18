@@ -4,8 +4,8 @@
  * and open the template in the editor.
  */
 package alpha.project;
-
 import java.util.GregorianCalendar;
+import java.time.format.DateTimeFormatter;
 
 /**
  *
@@ -24,17 +24,19 @@ public class Punch {
         this.terminalid = terminalid;
         this.punchtypeid = punchtypeid;
     }
+    
     public String printOriginalTimestamp() {
         String msg;
         switch (getPunchtypeid()) {
             case 1:
-                msg = "#" + badgeid + " CLOCKED IN: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " CLOCKED IN: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+              
                 break;
             case 0:
-                msg = "#" + badgeid + " CLOCKED OUT: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " CLOCKED OUT: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
                 break;
             default:
-                msg = "#" + badgeid + " TIMED OUT: " + originaltime.getTime().toString();
+                msg = "#" + badgeid + " TIMED OUT: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
                 break;
         }
         
