@@ -160,18 +160,14 @@ public class TASDatabase {
                     int graceperiod = rs.getInt("graceperiod");
                     int dock = rs.getInt("dock");
                     int lunchdeduct = rs.getInt("lunchdeduct");
-                    long start = rs.getLong("start");
-                    long stop = rs.getLong("stop");
-                    long lunchstart = rs.getLong("lunchstart");
-                    long lunchstop = rs.getLong("lunchstop");
+                    Time start = rs.getTime("start");
+                    Time stop = rs.getTime("stop");
+                    Time lunchstart = rs.getTime("lunchstart");
+                    Time lunchstop = rs.getTime("lunchstop");
                     String d = rs.getString("description");
-                    Timestamp star = new Timestamp(start);
-                    Timestamp sto = new Timestamp(stop);
-                    Timestamp lunchstar = new Timestamp(lunchstart);
-                    Timestamp lunchsto = new Timestamp(lunchstop);
                     
                    
-                    s = new Shift(Id,interval,graceperiod,dock,lunchdeduct,d,star,sto,lunchstar,lunchsto);
+                    s = new Shift(Id,interval,graceperiod,dock,lunchdeduct,d,start,stop,lunchstart,lunchstop);
                 }
         
       
