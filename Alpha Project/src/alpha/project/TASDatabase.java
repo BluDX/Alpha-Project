@@ -178,4 +178,64 @@ public class TASDatabase {
         //Querys for the corresponding shift, creates the object, returns it
     return s;
     }
+    
+    
+    public int insertPunch(Punch p){
+	
+	//Extract data from Punch
+	
+	int terminalID = p.getTerminalid();
+	int punchTypeID = p.getPunchtypeid();
+	int ID = p.getId();
+	GregorianCalendar g = p.getOriginaltime();
+	String badgeID = p.getBadgeid();
+	
+	try{
+		//Initialize values that will be used to return the punchID and check if the query was exexcuted
+		
+		int punchID;
+            	int Results;
+		ResultSet rst;		
+
+		// the mysql insert statement
+      	
+		String query = " insert into users (id, terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?, ?)";
+
+		// create the mysql insert preparedstatement
+      	
+		PreparedStatement preparedStmt = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
+
+		//replaces the question marks in the query with values		
+
+      		preparedStmt.setInt (1, ID);
+      		preparedStmt.setInt (2, terminalID);
+      		preparedStmt.setString   (3, badgeID);
+      		//preparedStmt.setGregorianCalendar(4, g);
+      		preparedStmt.setInt    (5, punchTypeID);
+
+		//executes the query and closes it
+
+		Results = preparedStmt.executeUpdate();
+		conn.close();
+
+		//Check to see if punch was properly inserted		
+
+		if(Results == 1){
+			rst = preparedStmt.getGeneratedKeys();
+			if(rst.next()){
+                    		punchID = rst.getInt(1);
+                    		p.setId(punchID);
+                	}
+		}
+	}
+	catch(SQLException ex){
+	
+	//I do not know what this error is for but it was on the hints in NetBeans
+            
+		Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       
+		return p.getId();
+}
+    
 }
