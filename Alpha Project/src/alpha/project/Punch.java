@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
  * take punch and create multiple copies that represent every point on the timeline; shiftstart, shiftstop, graceperiod, etc.
  * wherever the punch falls, you can snap it to one of those other positions. helpful for accrued hours.
  * 
- * @author pinoran, Amber, Adam 
+ * @author pinoran, Adam, Amber
  * Last updated: 10/22
  */
 public class Punch {
@@ -96,7 +96,7 @@ public class Punch {
         this.badgeid = badgeid;
     }
 
-    public GregorianCalendar getOriginaltime() {
+    public GregorianCalendar getOriginaltimestamp() {
         return originaltime;
     }
 

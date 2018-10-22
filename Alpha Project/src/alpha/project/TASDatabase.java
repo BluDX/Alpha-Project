@@ -1,5 +1,7 @@
 package alpha.project;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -187,7 +189,7 @@ public class TASDatabase {
 	int terminalID = p.getTerminalid();
 	int punchTypeID = p.getPunchtypeid();
 	int ID = p.getId();
-	GregorianCalendar g = p.getOriginaltime();
+	GregorianCalendar g = p.getOriginaltimestamp();
 	String badgeID = p.getBadgeid();
 	Long L = g.getTimeInMillis()/1000;
         Timestamp s = new Timestamp(L);
@@ -238,5 +240,36 @@ public class TASDatabase {
        
 		return p.getId();
 }
-    
+    public ArrayList getDailyPunchList(Badge b, long ts) {
+        ArrayList<Punch> punchList = new ArrayList<>();
+        GregorianCalendar dayInQuestion = new GregorianCalendar();
+        dayInQuestion.setTimeInMillis(ts);
+        GregorianCalendar queryTime = new GregorianCalendar();
+        try {
+            ResultSet rst;
+           
+            String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS time FROM punch WHERE badgeid = ?";
+            
+            PreparedStatement preparedStmt = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStmt.setString(1, b.getId());
+            
+            rst = preparedStmt.executeQuery();
+            int counter = 0;
+            while(rst.next()) {
+                queryTime.setTimeInMillis(rst.getLong("time"));
+                if(queryTime.get(Calendar.DAY_OF_YEAR) == dayInQuestion.get(Calendar.DAY_OF_YEAR) && queryTime.get(Calendar.YEAR) == dayInQuestion.get(Calendar.YEAR)) {
+                    Punch p = getPunch(rst.getInt("id"));
+                    punchList.add(p); //This MIGHT work for getting all the punches from a given badge on a given day. Still need to find a way to add the first punch from the following day. 
+                }
+            }
+            
+        }
+        catch(SQLException ex) {
+            
+        }
+        
+        
+        
+        return punchList;
+    }    
 }
