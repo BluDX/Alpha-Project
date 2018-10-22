@@ -189,7 +189,8 @@ public class TASDatabase {
 	int ID = p.getId();
 	GregorianCalendar g = p.getOriginaltime();
 	String badgeID = p.getBadgeid();
-	
+	Long L = g.getTimeInMillis()/1000;
+        Timestamp s = new Timestamp(L);
 	try{
 		//Initialize values that will be used to return the punchID and check if the query was exexcuted
 		
@@ -199,7 +200,7 @@ public class TASDatabase {
 
 		// the mysql insert statement
       	
-		String query = " insert into users (id, terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?, ?)";
+		String query = " insert into punch (id, terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?, ?)";
 
 		// create the mysql insert preparedstatement
       	
@@ -207,16 +208,16 @@ public class TASDatabase {
 
 		//replaces the question marks in the query with values		
 
-      		preparedStmt.setInt (1, ID);
-      		preparedStmt.setInt (2, terminalID);
-      		preparedStmt.setString   (3, badgeID);
-      		preparedStmt.setObject(4, g);
-      		preparedStmt.setInt    (5, punchTypeID);
+      		preparedStmt.setInt(1, ID);
+      		preparedStmt.setInt(2, terminalID);
+      		preparedStmt.setString(3, badgeID);
+      		preparedStmt.setTimestamp(4, s);
+      		preparedStmt.setInt(5, punchTypeID);
 
 		//executes the query and closes it
 
 		Results = preparedStmt.executeUpdate();
-		conn.close();
+		
 
 		//Check to see if punch was properly inserted		
 
