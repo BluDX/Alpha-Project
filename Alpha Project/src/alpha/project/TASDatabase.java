@@ -210,7 +210,7 @@ public class TASDatabase {
       		preparedStmt.setInt (1, ID);
       		preparedStmt.setInt (2, terminalID);
       		preparedStmt.setString   (3, badgeID);
-      		//preparedStmt.setGregorianCalendar(4, g);
+      		preparedStmt.setObject(4, g);
       		preparedStmt.setInt    (5, punchTypeID);
 
 		//executes the query and closes it
