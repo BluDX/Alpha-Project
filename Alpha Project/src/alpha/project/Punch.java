@@ -8,9 +8,14 @@ import java.util.GregorianCalendar;
 import java.time.format.DateTimeFormatter;
 
 /**
- *
- * @author Adam 
- * Last updated: 10/4/18
+ * take each punch (date and time) and create copies of it. copies of timestamps initialized to timeline. 
+ * 10 timestamp objects. 
+ * 
+ * take punch and create multiple copies that represent every point on the timeline; shiftstart, shiftstop, graceperiod, etc.
+ * wherever the punch falls, you can snap it to one of those other positions. helpful for accrued hours.
+ * 
+ * @author pinoran, Amber, Adam 
+ * Last updated: 10/22
  */
 public class Punch {
     private int id = 0;
@@ -24,6 +29,30 @@ public class Punch {
         this.terminalid = terminalid;
         this.punchtypeid = punchtypeid;
     }
+    
+    // Feature 3 stuff
+    
+    public void adjust (Shift s) {
+        
+        // bounds for the timeline; get time in millis
+        
+        GregorianCalendar beforeShift = new GregorianCalendar();
+        beforeShift.setTimeInMillis(s.getShiftStart().getTime());
+        // beforeShift.add(Calendar.MINUTE, -(s.getInterval()));
+        
+        GregorianCalendar beforeGrace = new GregorianCalendar();
+        
+        GregorianCalendar afterStartDock = new GregorianCalendar();
+        
+        GregorianCalendar beforeStopDock = new GregorianCalendar();
+  
+        GregorianCalendar beforeStopGrace = new GregorianCalendar();
+        
+        GregorianCalendar afterShiftStop = new GregorianCalendar();
+
+    }
+    
+    
     
     public String printOriginalTimestamp() {
         String msg;
@@ -90,5 +119,9 @@ public class Punch {
     public void setPunchtypeid(int punchtypeid) {
         this.punchtypeid = punchtypeid;
     }
+    
+    
+    
+    
 
 }
