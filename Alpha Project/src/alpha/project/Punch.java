@@ -36,11 +36,15 @@ public class Punch {
         
         // bounds for the timeline; get time in millis
         
+        
         GregorianCalendar beforeShift = new GregorianCalendar();
         beforeShift.setTimeInMillis(s.getShiftStart().getTime());
         // beforeShift.add(Calendar.MINUTE, -(s.getInterval()));
         
-        GregorianCalendar beforeGrace = new GregorianCalendar();
+        // not working because int can't be dereferenced; not sure how to get it other than changing to time
+        GregorianCalendar beforeStartGrace = new GregorianCalendar();
+        beforeStartGrace.setTimeInMillis(s.getGracePeriod().getTime());
+        
         
         GregorianCalendar afterStartDock = new GregorianCalendar();
         
@@ -48,8 +52,8 @@ public class Punch {
   
         GregorianCalendar beforeStopGrace = new GregorianCalendar();
         
-        GregorianCalendar afterShiftStop = new GregorianCalendar();
-
+        GregorianCalendar afterShift = new GregorianCalendar();
+        afterShift.setTimeInMillis(s.getShiftStop().getTime());
     }
     
     
