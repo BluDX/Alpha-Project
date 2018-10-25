@@ -248,7 +248,7 @@ public class TASDatabase {
         try {
             ResultSet rst;
            
-            String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS time FROM punch WHERE badgeid = ?";
+            String query = "SELECT *, UNIX_TIMESTAMP(originaltimestamp) * 1000 AS time FROM punch WHERE badgeid = ? ORDER BY originaltimestamp";
             
             PreparedStatement preparedStmt = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStmt.setString(1, b.getId());
@@ -260,6 +260,16 @@ public class TASDatabase {
                 if(queryTime.get(Calendar.DAY_OF_YEAR) == dayInQuestion.get(Calendar.DAY_OF_YEAR) && queryTime.get(Calendar.YEAR) == dayInQuestion.get(Calendar.YEAR)) {
                     Punch p = getPunch(rst.getInt("id"));
                     punchList.add(p); //This MIGHT work for getting all the punches from a given badge on a given day. Still need to find a way to add the first punch from the following day. 
+                }
+            }
+            rst = preparedStmt.executeQuery();
+            
+            dayInQuestion.add(Calendar.DATE,1);
+            if(rst.next()) {
+                queryTime.setTimeInMillis(rst.getLong("time"));
+                if(queryTime.get(Calendar.DAY_OF_YEAR) == dayInQuestion.get(Calendar.DAY_OF_YEAR) && queryTime.get(Calendar.YEAR) == dayInQuestion.get(Calendar.YEAR)) {
+                    Punch p = getPunch(rst.getInt("id"));
+                    punchList.add(p); //Hopefully this accurately adds the first punch of the following day. 
                 }
             }
             
