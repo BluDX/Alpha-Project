@@ -21,13 +21,15 @@ public class Punch {
     private int id = 0;
     private int terminalid;
     private String badgeid;
-    private GregorianCalendar originaltime = new GregorianCalendar();
-    private GregorianCalendar adjustedtime = null;
+    private long originaltime;
+    private long adjustedtime;
     private int punchtypeid;
     public Punch(Badge badge, int terminalid, int punchtypeid) {
         badgeid = badge.getId();
         this.terminalid = terminalid;
         this.punchtypeid = punchtypeid;
+        this.originaltime = (new GregorianCalendar()).getTimeInMillis();
+        this.adjustedtime = 0;
     }
     
     // Feature 3 stuff
@@ -59,17 +61,19 @@ public class Punch {
    */
     
     public String printOriginalTimestamp() {
+        GregorianCalendar ots = new GregorianCalendar();
+        ots.setTimeInMillis(originaltime);
         String msg;
         switch (getPunchtypeid()) {
             case 1:
-                msg = "#" + badgeid + " CLOCKED IN: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " CLOCKED IN: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
               
                 break;
             case 0:
-                msg = "#" + badgeid + " CLOCKED OUT: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " CLOCKED OUT: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
                 break;
             default:
-                msg = "#" + badgeid + " TIMED OUT: " + originaltime.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " TIMED OUT: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
                 break;
         }
         
@@ -101,20 +105,14 @@ public class Punch {
     }
 
     public long getOriginaltimestamp() {
-        return originaltime.getTimeInMillis();
+        return originaltime;
     }
 
-    public void setOriginaltime(GregorianCalendar originaltime) {
+    public void setOriginaltime(long originaltime) {
         this.originaltime = originaltime;
     }
 
-    public GregorianCalendar getAdjustedtime() {
-        return adjustedtime;
-    }
 
-    public void setAdjustedtime(GregorianCalendar adjustedtime) {
-        this.adjustedtime = adjustedtime;
-    }
 
     public int getPunchtypeid() {
         return punchtypeid;

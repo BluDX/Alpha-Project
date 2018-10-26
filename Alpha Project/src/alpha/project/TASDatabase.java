@@ -70,9 +70,7 @@ public class TASDatabase {
                     //Need to create a punch and to create a punch I need a badge
                     p = new Punch(b, terminalId, punchTypeId);
                     //set original time to whatever it was with setter
-                    GregorianCalendar origTime = new GregorianCalendar();
-                    origTime.setTimeInMillis(time);
-                    p.setOriginaltime(origTime);
+                    p.setOriginaltime(time);
                 }
             }
         }catch(SQLException ex){
@@ -190,10 +188,8 @@ public class TASDatabase {
 	int punchTypeID = p.getPunchtypeid();
 	int ID = p.getId();
         String badgeID = p.getBadgeid();
-        GregorianCalendar g = new GregorianCalendar();
-        g.setTimeInMillis(p.getOriginaltimestamp());
-	Long L = g.getTimeInMillis()/1000;
-        Timestamp s = new Timestamp(L);
+        Timestamp s = new Timestamp(p.getOriginaltimestamp());
+        
 	try{
 		//Initialize values that will be used to return the punchID and check if the query was exexcuted
 		
@@ -203,7 +199,7 @@ public class TASDatabase {
 
 		// the mysql insert statement
       	
-		String query = " insert into punch (id, terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?, ?)";
+		String query = " insert into punch (terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?)";
 
 		// create the mysql insert preparedstatement
       	
@@ -211,11 +207,10 @@ public class TASDatabase {
 
 		//replaces the question marks in the query with values		
 
-      		preparedStmt.setInt(1, ID);
-      		preparedStmt.setInt(2, terminalID);
-      		preparedStmt.setString(3, badgeID);
-      		preparedStmt.setTimestamp(4, s);
-      		preparedStmt.setInt(5, punchTypeID);
+      		preparedStmt.setInt(1, terminalID);
+      		preparedStmt.setString(2, badgeID);
+      		preparedStmt.setTimestamp(3, s);
+      		preparedStmt.setInt(4, punchTypeID);
 
 		//executes the query and closes it
 
