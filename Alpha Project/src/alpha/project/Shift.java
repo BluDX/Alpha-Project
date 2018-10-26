@@ -111,7 +111,6 @@ public class Shift {
     }
 
     //formatting for output
-    
     @Override
     public String toString() {
         

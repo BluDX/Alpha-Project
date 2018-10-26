@@ -32,7 +32,7 @@ public class Punch {
     
     // Feature 3 stuff
     
-    public void adjust (Shift s) {
+    /*public void adjust (Shift s) {
         
         // bounds for the timeline; get time in millis
         
@@ -56,7 +56,7 @@ public class Punch {
         afterShift.setTimeInMillis(s.getShiftStop().getTime());
     }
     
-    
+   */
     
     public String printOriginalTimestamp() {
         String msg;
@@ -100,8 +100,8 @@ public class Punch {
         this.badgeid = badgeid;
     }
 
-    public GregorianCalendar getOriginaltimestamp() {
-        return originaltime;
+    public long getOriginaltimestamp() {
+        return originaltime.getTimeInMillis();
     }
 
     public void setOriginaltime(GregorianCalendar originaltime) {

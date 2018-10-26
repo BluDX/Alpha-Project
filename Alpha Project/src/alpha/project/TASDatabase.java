@@ -189,8 +189,9 @@ public class TASDatabase {
 	int terminalID = p.getTerminalid();
 	int punchTypeID = p.getPunchtypeid();
 	int ID = p.getId();
-	GregorianCalendar g = p.getOriginaltimestamp();
-	String badgeID = p.getBadgeid();
+        String badgeID = p.getBadgeid();
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(p.getOriginaltimestamp());
 	Long L = g.getTimeInMillis()/1000;
         Timestamp s = new Timestamp(L);
 	try{
