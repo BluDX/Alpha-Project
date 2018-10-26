@@ -1,5 +1,8 @@
 package alpha.project;
 
+import java.text.SimpleDateFormat;
+import java.util.GregorianCalendar;
+
 
 public class AlphaProject {
 
@@ -40,6 +43,15 @@ public class AlphaProject {
         System.out.println(p2.printOriginalTimestamp());
         System.out.println(p3.printOriginalTimestamp());
         System.out.println(p4.printOriginalTimestamp());
+        
+        Punch idiotmoronface = new Punch(db.getBadge("021890C0"), 101, 1);
+        GregorianCalendar ots = new GregorianCalendar();
+        ots.setTimeInMillis(idiotmoronface.getOriginaltimestamp());
+        
+        String originaltimestamp = (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")).format(ots.getTime());
+        
+        System.out.println(ots.getTime().toString());
+        System.out.println(originaltimestamp);
         //Badge badgeTest = new Badge("ABCDEFG", "Schmoe, Joe");
         //Punch punchTest = new Punch(badgeTest, 103, 1);
         
