@@ -13,6 +13,39 @@ import java.time.format.DateTimeFormatter;
  * 
  * take punch and create multiple copies that represent every point on the timeline; shiftstart, shiftstop, graceperiod, etc.
  * wherever the punch falls, you can snap it to one of those other positions. helpful for accrued hours.
+ * ranged checking with edge cases. loo kat the position of a punch on a timeline and determine based on the range in which it falls how to adjust it.
+ * start of shit - interval is shift start range. if you clock in within that range, your punch gets moved forward of back
+ * clock start moved back, lunch stop moved forward
+ * 7 time zones
+ * rounding only done when leaving early? clock out
+ * 
+ * 
+ * take original timestamp of the punch; includes date and time components, collapse it to long integer and then use that to seed different timestamp objects corresponding to each point
+ * 10 timestamp objects
+ * set time fields within them according to whatever shift rules say they should be
+ * 1) shift start - interval
+ * !!!2) start of the shift (ex. 7AM)
+ * 3) shift start + grace period
+ * 4) shift start + dock penalty
+ * 5) lunch start (ex: 12:00)
+ * 6) lunch stop (ex: 12:30)
+ * 7) shift stop - dock penalty
+ * 8) shift stop - grace
+ * !!! 9) shift stop
+ * 10) shift stop + interval
+ * 
+ * !!! relative to one another
+ * copy timestamp, go into hms fields, setting them
+ * don't wanna hardcode
+ * punch.setAdjustedTimestamp(lunchStart.getTimeInMillis();
+ * create timestamps, do comparison and check edge cases
+ * 
+ * 
+ * GregorianCalendar shiftstart = new gregorianCalendar();
+ * shiftstart.setTimeInMillis(punch.getOriginalTimestamp();
+ * shiftstart.set(
+ * 
+ * shiftstart, shiftstop, lunchstart, lunchstop
  * 
  * @author pinoran, Adam, Amber
  * Last updated: 10/22
@@ -36,9 +69,33 @@ public class Punch {
     
     /*public void adjust (Shift s) {
         
-        // bounds for the timeline; get time in millis
         
-        
+        GregorianCalendar shiftStart = new GregorianCalendar();
+        shiftStart.setTimeInMillis(punch.getOriginalTimestamp());
+        shiftStart.set(Calendar.HOUR, shift.getShiftStartHour());
+        shiftStart.set(Calendar.MINUTE, shift.getShiftStartMinute());
+        shiftStart.set(Calendar.SECOND, shift.getShiftStartSecond());
+    
+        GregorianCalendar shiftStart = new GregorianCalendar();
+        shiftStop.setTimeInMillis(punch.getOriginalTimestamp());
+        shiftStop.set(Calendar.HOUR, shift.getShiftStopHour());
+        shiftStop.set(Calendar.MINUTE, shift.getShiftStopMinute());
+        shiftStop.set(Calendar.SECOND, shift.getShiftStopSecond());
+    
+        GregorianCalendar LunchStart = new GregorianCalendar();
+        LunchStart.setTimeInMillis(punch.getOriginalTimestamp());
+        LunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
+        LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
+        LunchStart.set(Calendar.SECOND, shift.getLunchStartSecond());
+   
+        GregorianCalendar LunchStart = new GregorianCalendar();
+        lunchStop.setTimeInMillis(punch.getOriginalTimestamp());
+        lunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
+        lunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
+        lunchStop.set(Calendar.SECOND, shift.getLunchStopSecond());
+    
+    
+    
         GregorianCalendar beforeShift = new GregorianCalendar();
         beforeShift.setTimeInMillis(s.getShiftStart().getTime());
         // beforeShift.add(Calendar.MINUTE, -(s.getInterval()));
