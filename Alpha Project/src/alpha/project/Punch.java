@@ -6,6 +6,7 @@
 package alpha.project;
 import java.util.GregorianCalendar;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 /**
  * take each punch (date and time) and create copies of it. copies of timestamps initialized to timeline. 
@@ -67,55 +68,85 @@ public class Punch {
     
     // Feature 3 stuff
     
-    /*public void adjust (Shift s) {
-        
+    public void adjust (Shift shift) {
+        TASDatabase db = new TASDatabase();
+        Punch punch = db.getPunch(this.id); //placeholder punch so stuff compiles and works nicely. Not exactly sure if this is the punch that needs to be modified.
         
         GregorianCalendar shiftStart = new GregorianCalendar();
-        shiftStart.setTimeInMillis(punch.getOriginalTimestamp());
+        shiftStart.setTimeInMillis(punch.getOriginaltimestamp());
         shiftStart.set(Calendar.HOUR, shift.getShiftStartHour());
         shiftStart.set(Calendar.MINUTE, shift.getShiftStartMinute());
-        shiftStart.set(Calendar.SECOND, shift.getShiftStartSecond());
+        shiftStart.set(Calendar.SECOND, 0);
     
-        GregorianCalendar shiftStart = new GregorianCalendar();
-        shiftStop.setTimeInMillis(punch.getOriginalTimestamp());
+        GregorianCalendar shiftStop = new GregorianCalendar();
+        shiftStop.setTimeInMillis(punch.getOriginaltimestamp());
         shiftStop.set(Calendar.HOUR, shift.getShiftStopHour());
         shiftStop.set(Calendar.MINUTE, shift.getShiftStopMinute());
-        shiftStop.set(Calendar.SECOND, shift.getShiftStopSecond());
+        shiftStop.set(Calendar.SECOND, 0);
     
         GregorianCalendar LunchStart = new GregorianCalendar();
-        LunchStart.setTimeInMillis(punch.getOriginalTimestamp());
+        LunchStart.setTimeInMillis(punch.getOriginaltimestamp());
         LunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
         LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
-        LunchStart.set(Calendar.SECOND, shift.getLunchStartSecond());
+        LunchStart.set(Calendar.SECOND, 0);
    
-        GregorianCalendar LunchStart = new GregorianCalendar();
-        lunchStop.setTimeInMillis(punch.getOriginalTimestamp());
-        lunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
-        lunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
-        lunchStop.set(Calendar.SECOND, shift.getLunchStopSecond());
+        GregorianCalendar LunchStop = new GregorianCalendar();
+        LunchStop.setTimeInMillis(punch.getOriginaltimestamp());
+        LunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
+        LunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
+        LunchStop.set(Calendar.SECOND, 0);
     
-    
-    
-        GregorianCalendar beforeShift = new GregorianCalendar();
-        beforeShift.setTimeInMillis(s.getShiftStart().getTime());
-        // beforeShift.add(Calendar.MINUTE, -(s.getInterval()));
+        GregorianCalendar startInterval = shiftStart;
+        startInterval.roll(Calendar.MINUTE, -shift.getInterval());
         
-        // not working because int can't be dereferenced; not sure how to get it other than changing to time
-        GregorianCalendar beforeStartGrace = new GregorianCalendar();
-        beforeStartGrace.setTimeInMillis(s.getGracePeriod().getTime());
+        GregorianCalendar startGrace = shiftStart;
+        startGrace.roll(Calendar.MINUTE, shift.getGracePeriod());
         
+        GregorianCalendar startDock = shiftStart;
+        startDock.roll(Calendar.MINUTE, shift.getDock());
         
-        GregorianCalendar afterStartDock = new GregorianCalendar();
+        GregorianCalendar stopDock = shiftStop;
+        stopDock.roll(Calendar.MINUTE, -shift.getDock());
         
-        GregorianCalendar beforeStopDock = new GregorianCalendar();
-  
-        GregorianCalendar beforeStopGrace = new GregorianCalendar();
+        GregorianCalendar stopGrace = shiftStop;
+        stopGrace.roll(Calendar.MINUTE, -shift.getGracePeriod());
         
-        GregorianCalendar afterShift = new GregorianCalendar();
-        afterShift.setTimeInMillis(s.getShiftStop().getTime());
+        GregorianCalendar stopInterval = shiftStop;
+        stopInterval.roll(Calendar.MINUTE, shift.getInterval());
+        
+        long punchTime = punch.getOriginaltimestamp();
+        // I think I should be using a setter to change the punch's adjusted timestamp but that setter doesn't exist. I think Snellen told me to delete it. Maybe another way??
+        // for now just changing punchTime will do. Easy enough fix later.
+        if ( punchTime < shiftStart.getTimeInMillis() && punchTime > startInterval.getTimeInMillis() ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
+            punchTime = shiftStart.getTimeInMillis();
+        }
+        else if ( punchTime > shiftStart.getTimeInMillis() && punchTime < startGrace.getTimeInMillis() ) { // punch is greater than start time but less than the grace period. Snap to start time.
+            punchTime = shiftStart.getTimeInMillis();
+        }
+        else if ( punchTime > startGrace.getTimeInMillis() && punchTime < startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
+            punchTime = startDock.getTimeInMillis();
+        }
+        else if ( punchTime > LunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
+            punchTime = LunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked??
+        }
+        else if ( punchTime < LunchStop.getTimeInMillis() ) { //Same problem with the previous condition
+            punchTime = LunchStop.getTimeInMillis();
+        }
+        else if ( punchTime < stopGrace.getTimeInMillis() && punchTime > stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
+            punchTime = stopDock.getTimeInMillis();
+        }
+        else if ( punchTime > stopGrace.getTimeInMillis() && punchTime < shiftStop.getTimeInMillis() ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
+            punchTime = shiftStop.getTimeInMillis();
+        }
+        else if ( punchTime > shiftStop.getTimeInMillis() && punchTime < stopInterval.getTimeInMillis() ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
+            punchTime = shiftStop.getTimeInMillis();
+        }
+        else {
+            //Move to the nearest 15 minute interval. Nothing comes to mind immediately and I want to grab food.
+        }
+
     }
     
-   */
     
     public String printOriginalTimestamp() {
         GregorianCalendar ots = new GregorianCalendar();

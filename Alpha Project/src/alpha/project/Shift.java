@@ -93,6 +93,53 @@ public class Shift {
         return lunchStop;
     }
     
+    public int getShiftStartHour() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(shiftStart.getTime());
+        return g.get(Calendar.HOUR_OF_DAY);
+    }
+    
+    public int getShiftStartMinute() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(shiftStart.getTime());
+        return g.get(Calendar.MINUTE);
+    }
+    
+    public int getShiftStopHour() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(shiftStop.getTime());
+        return g.get(Calendar.HOUR_OF_DAY);
+    }
+    
+    public int getShiftStopMinute() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(shiftStop.getTime());
+        return g.get(Calendar.MINUTE);
+    }
+    
+    public int getLunchStartHour() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(lunchStart.getTime());
+        return g.get(Calendar.HOUR_OF_DAY);
+    }
+    
+    public int getLunchStartMinute() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(lunchStart.getTime());
+        return g.get(Calendar.MINUTE);
+    }
+    
+    public int getLunchStopHour() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(lunchStop.getTime());
+        return g.get(Calendar.HOUR_OF_DAY);
+    }
+    
+    public int getLunchStopMinute() {
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(lunchStop.getTime());
+        return g.get(Calendar.MINUTE);
+    }
     // long cannot be converted to greg calendar; should be string
     // 60 * 1000
     
