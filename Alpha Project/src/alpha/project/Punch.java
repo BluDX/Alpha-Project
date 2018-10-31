@@ -90,11 +90,11 @@ public class Punch {
         LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
         LunchStart.set(Calendar.SECOND, 0);
    
-        GregorianCalendar LunchStop = new GregorianCalendar();
-        LunchStop.setTimeInMillis(punch.getOriginaltimestamp());
-        LunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
-        LunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
-        LunchStop.set(Calendar.SECOND, 0);
+        GregorianCalendar lunchStop = new GregorianCalendar();
+        lunchStop.setTimeInMillis(punch.getOriginaltimestamp());
+        lunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
+        lunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
+        lunchStop.set(Calendar.SECOND, 0);
     
         GregorianCalendar startInterval = shiftStart;
         startInterval.roll(Calendar.MINUTE, -shift.getInterval());
@@ -129,8 +129,8 @@ public class Punch {
         else if ( punchTime > LunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
             punchTime = LunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked??
         }
-        else if ( punchTime < LunchStop.getTimeInMillis() ) { //Same problem with the previous condition
-            punchTime = LunchStop.getTimeInMillis();
+        else if ( punchTime < lunchStop.getTimeInMillis() ) { //Same problem with the previous condition
+            punchTime = lunchStop.getTimeInMillis();
         }
         else if ( punchTime < stopGrace.getTimeInMillis() && punchTime > stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
             punchTime = stopDock.getTimeInMillis();
