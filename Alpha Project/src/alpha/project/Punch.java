@@ -84,11 +84,11 @@ public class Punch {
         shiftStop.set(Calendar.MINUTE, shift.getShiftStopMinute());
         shiftStop.set(Calendar.SECOND, 0);
     
-        GregorianCalendar LunchStart = new GregorianCalendar();
-        LunchStart.setTimeInMillis(punch.getOriginaltimestamp());
-        LunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
-        LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
-        LunchStart.set(Calendar.SECOND, 0);
+        GregorianCalendar lunchStart = new GregorianCalendar();
+        lunchStart.setTimeInMillis(punch.getOriginaltimestamp());
+        lunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
+        lunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
+        lunchStart.set(Calendar.SECOND, 0);
    
         GregorianCalendar lunchStop = new GregorianCalendar();
         lunchStop.setTimeInMillis(punch.getOriginaltimestamp());
@@ -126,8 +126,8 @@ public class Punch {
         else if ( punchTime > startGrace.getTimeInMillis() && punchTime < startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
             punchTime = startDock.getTimeInMillis();
         }
-        else if ( punchTime > LunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
-            punchTime = LunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked??
+        else if ( punchTime > lunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
+            punchTime = lunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked??
         }
         else if ( punchTime < lunchStop.getTimeInMillis() ) { //Same problem with the previous condition
             punchTime = lunchStop.getTimeInMillis();
