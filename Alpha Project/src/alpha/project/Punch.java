@@ -69,29 +69,27 @@ public class Punch {
     // Feature 3 stuff
     
     public void adjust (Shift shift) {
-        TASDatabase db = new TASDatabase();
-        Punch punch = db.getPunch(this.id); //placeholder punch so stuff compiles and works nicely. Not exactly sure if this is the punch that needs to be modified.
         
         GregorianCalendar shiftStart = new GregorianCalendar();
-        shiftStart.setTimeInMillis(punch.getOriginaltimestamp());
+        shiftStart.setTimeInMillis(this.originaltime);
         shiftStart.set(Calendar.HOUR, shift.getShiftStartHour());
         shiftStart.set(Calendar.MINUTE, shift.getShiftStartMinute());
         shiftStart.set(Calendar.SECOND, 0);
     
         GregorianCalendar shiftStop = new GregorianCalendar();
-        shiftStop.setTimeInMillis(punch.getOriginaltimestamp());
+        shiftStop.setTimeInMillis(this.originaltime);
         shiftStop.set(Calendar.HOUR, shift.getShiftStopHour());
         shiftStop.set(Calendar.MINUTE, shift.getShiftStopMinute());
         shiftStop.set(Calendar.SECOND, 0);
     
-        GregorianCalendar lunchStart = new GregorianCalendar();
-        lunchStart.setTimeInMillis(punch.getOriginaltimestamp());
-        lunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
-        lunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
-        lunchStart.set(Calendar.SECOND, 0);
+        GregorianCalendar LunchStart = new GregorianCalendar();
+        LunchStart.setTimeInMillis(this.originaltime);
+        LunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
+        LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
+        LunchStart.set(Calendar.SECOND, 0);
    
         GregorianCalendar lunchStop = new GregorianCalendar();
-        lunchStop.setTimeInMillis(punch.getOriginaltimestamp());
+        lunchStop.setTimeInMillis(this.originaltime);
         lunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
         lunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
         lunchStop.set(Calendar.SECOND, 0);
@@ -114,31 +112,34 @@ public class Punch {
         GregorianCalendar stopInterval = shiftStop;
         stopInterval.roll(Calendar.MINUTE, shift.getInterval());
         
-        long punchTime = punch.getOriginaltimestamp();
+        GregorianCalendar g = new GregorianCalendar();
+        g.setTimeInMillis(this.originaltime);
+        g.set(Calendar.SECOND, 0);
+        long punchTime = g.getTimeInMillis();
         // I think I should be using a setter to change the punch's adjusted timestamp but that setter doesn't exist. I think Snellen told me to delete it. Maybe another way??
         // for now just changing punchTime will do. Easy enough fix later.
-        if ( punchTime < shiftStart.getTimeInMillis() && punchTime > startInterval.getTimeInMillis() ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
+        if ( punchTime <= shiftStart.getTimeInMillis() && punchTime >= startInterval.getTimeInMillis() ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
             punchTime = shiftStart.getTimeInMillis();
         }
-        else if ( punchTime > shiftStart.getTimeInMillis() && punchTime < startGrace.getTimeInMillis() ) { // punch is greater than start time but less than the grace period. Snap to start time.
+        else if ( punchTime >= shiftStart.getTimeInMillis() && punchTime <= startGrace.getTimeInMillis() ) { // punch is greater than start time but less than the grace period. Snap to start time.
             punchTime = shiftStart.getTimeInMillis();
         }
-        else if ( punchTime > startGrace.getTimeInMillis() && punchTime < startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
+        else if ( punchTime >= startGrace.getTimeInMillis() && punchTime <= startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
             punchTime = startDock.getTimeInMillis();
         }
-        else if ( punchTime > lunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
-            punchTime = lunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked??
+        else if ( punchTime >= LunchStart.getTimeInMillis() ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
+            punchTime = LunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked?? Yes, check if clock out punch. If equal. set the lunch flag true as well 
         }
-        else if ( punchTime < lunchStop.getTimeInMillis() ) { //Same problem with the previous condition
+        else if ( punchTime <= lunchStop.getTimeInMillis() ) { //Same problem with the previous condition
             punchTime = lunchStop.getTimeInMillis();
         }
-        else if ( punchTime < stopGrace.getTimeInMillis() && punchTime > stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
+        else if ( punchTime <= stopGrace.getTimeInMillis() && punchTime >= stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
             punchTime = stopDock.getTimeInMillis();
         }
-        else if ( punchTime > stopGrace.getTimeInMillis() && punchTime < shiftStop.getTimeInMillis() ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
+        else if ( punchTime >= stopGrace.getTimeInMillis() && punchTime <= shiftStop.getTimeInMillis() ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
             punchTime = shiftStop.getTimeInMillis();
         }
-        else if ( punchTime > shiftStop.getTimeInMillis() && punchTime < stopInterval.getTimeInMillis() ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
+        else if ( punchTime >= shiftStop.getTimeInMillis() && punchTime <= stopInterval.getTimeInMillis() ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
             punchTime = shiftStop.getTimeInMillis();
         }
         else {
