@@ -143,10 +143,54 @@ public class Punch {
             punchTime = shiftStop.getTimeInMillis();
         }
         else {
+         
             //Move to the nearest 15 minute interval. Nothing comes to mind immediately and I want to grab food.
+            /*
+            
+            
+            else if (punchTime % shift.getInterval() == 0) {
+            adjusted.setTimeInMillis(original.getTimeInMillis());
+            eventData = "(None)";
+            
+            }
+            
+            else if (modTime < 8) {
+            getAdjustedTimestamp().set(Calendar.MINUTE, roundedMin - modTime);
+            getAdjustedTimestamp().set(Calendar.SECOND, 0);
+          
+            event_data = "Interval Round";
+            
+            }
+            
+            
+            else {
+            getAdjustedTimestamp().set(Calendar.MINUTE, (roundedMin + (shift.getInterval() - modTime)));
+            getAdjustedTimestamp().set(Calendar.SECOND, 0);
+            
+            event_data = "Interval Round";
+            
+            
+            
+            
+            */
         }
 
     }
+    
+    
+    // interval rounding stuff
+    /*
+    int punchTime = original.get(Calendar.MINUTE);
+    int diffmins = punchTime;
+    
+    
+    unroundedTime = getOriginalTimeStamp().get(Calendar.MINUTE);
+    modTime = unroundedTime % shift.getInterval();
+    
+    //wat
+    
+    
+    */
     
     
     public String printOriginalTimestamp() {
