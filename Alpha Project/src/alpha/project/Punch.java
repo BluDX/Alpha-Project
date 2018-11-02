@@ -58,6 +58,7 @@ public class Punch {
     private long originaltime;
     private long adjustedtime;
     private int punchtypeid;
+    private boolean lunchFlag = false;
     public Punch(Badge badge, int terminalid, int punchtypeid) {
         badgeid = badge.getId();
         this.terminalid = terminalid;
@@ -127,11 +128,13 @@ public class Punch {
         else if ( punchTime >= startGrace.getTimeInMillis() && punchTime <= startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
             punchTime = startDock.getTimeInMillis();
         }
-        else if ( punchTime >= LunchStart.getTimeInMillis() && punchTime <= lunchStop.getTimeInMillis() && this.punchtypeid == 0 ) { // UNSURE WHAT CONDITIONS SHOULD BE: I think we want to snap punch to the start of lunch if they check out after lunch, but then what if it was a punch to clock back in from lunch and it was before 
-            punchTime = LunchStart.getTimeInMillis();          // the lunch actually ended? Should the punch type be checked?? Yes, check if clock out punch. If equal. set the lunch flag true as well 
+        else if ( punchTime >= LunchStart.getTimeInMillis() && punchTime <= lunchStop.getTimeInMillis() && this.punchtypeid == 0 ) {  
+            punchTime = LunchStart.getTimeInMillis();
+            lunchFlag = true;
         }
-        else if ( punchTime <= lunchStop.getTimeInMillis() && punchTime >= LunchStart.getTimeInMillis() && this.punchtypeid == 1 ) { //Same problem with the previous condition
+        else if ( punchTime <= lunchStop.getTimeInMillis() && punchTime >= LunchStart.getTimeInMillis() && this.punchtypeid == 1 ) { 
             punchTime = lunchStop.getTimeInMillis();
+            lunchFlag = true;
         }
         else if ( punchTime <= stopGrace.getTimeInMillis() && punchTime >= stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
             punchTime = stopDock.getTimeInMillis();
@@ -174,7 +177,8 @@ public class Punch {
             
             */
         }
-
+        
+        this.adjustedtime = punchTime;
     }
     
     
