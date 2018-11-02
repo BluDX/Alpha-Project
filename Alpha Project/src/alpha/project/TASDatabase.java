@@ -1,5 +1,6 @@
 package alpha.project;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -188,7 +189,11 @@ public class TASDatabase {
 	int punchTypeID = p.getPunchtypeid();
 	int ID = p.getId();
         String badgeID = p.getBadgeid();
-        Timestamp s = new Timestamp(p.getOriginaltimestamp());
+        //Timestamp s = new Timestamp(p.getOriginaltimestamp());
+        //Timestamp s = new Timestamp((new GregorianCalendar()).getTimeInMillis());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        GregorianCalendar s = new GregorianCalendar();
+        s.setTimeInMillis(p.getOriginaltimestamp());
         
 	try{
 		//Initialize values that will be used to return the punchID and check if the query was exexcuted
@@ -209,7 +214,7 @@ public class TASDatabase {
 
       		preparedStmt.setInt(1, terminalID);
       		preparedStmt.setString(2, badgeID);
-      		preparedStmt.setTimestamp(3, s);
+      		preparedStmt.setString(3, sdf.format(s.getTime()));
       		preparedStmt.setInt(4, punchTypeID);
 
 		//executes the query and closes it
