@@ -121,43 +121,8 @@ public class Punch {
         long punchTime = g.getTimeInMillis();
         // I think I should be using a setter to change the punch's adjusted timestamp but that setter doesn't exist. I think Snellen told me to delete it. Maybe another way??
         // for now just changing punchTime will do. Easy enough fix later.
-        if ( punchTime <= shiftStart.getTimeInMillis() && punchTime >= startInterval.getTimeInMillis() ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
-            punchTime = shiftStart.getTimeInMillis();
-            this.ruleInvoked = "Shift Start";
-        }
-        else if ( punchTime >= shiftStart.getTimeInMillis() && punchTime <= startGrace.getTimeInMillis() ) { // punch is greater than start time but less than the grace period. Snap to start time.
-            punchTime = shiftStart.getTimeInMillis();
-            this.ruleInvoked = "Shift Start";
-        }
-        else if ( punchTime >= startGrace.getTimeInMillis() && punchTime <= startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
-            punchTime = startDock.getTimeInMillis();
-            this.ruleInvoked = "Shift Dock";
-        }
-        else if ( punchTime >= LunchStart.getTimeInMillis() && punchTime <= lunchStop.getTimeInMillis() && this.punchtypeid == 0 ) {  
-            punchTime = LunchStart.getTimeInMillis();
-            lunchFlag = true;
-            this.ruleInvoked = "Lunch Start";
-        }
-        else if ( punchTime <= lunchStop.getTimeInMillis() && punchTime >= LunchStart.getTimeInMillis() && this.punchtypeid == 1 ) { 
-            punchTime = lunchStop.getTimeInMillis();
-            lunchFlag = true;
-            this.ruleInvoked = "Lunch Stop";
-        }
-        else if ( punchTime <= stopGrace.getTimeInMillis() && punchTime >= stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
-            punchTime = stopDock.getTimeInMillis();
-            this.ruleInvoked = "Shift Dock";
-        }
-        else if ( punchTime >= stopGrace.getTimeInMillis() && punchTime <= shiftStop.getTimeInMillis() ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
-            punchTime = shiftStop.getTimeInMillis();
-            this.ruleInvoked = "Shift Stop";
-        }
-        else if ( punchTime >= shiftStop.getTimeInMillis() && punchTime <= stopInterval.getTimeInMillis() ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
-            punchTime = shiftStop.getTimeInMillis();
-            this.ruleInvoked = "Shift Stop";
-        }
-        else {
-         
-            //Move to the nearest 15 minute interval. Nothing comes to mind immediately and I want to grab food.
+        if ( g.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || g.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
+            //Move to the nearest 15 minute interval.
             int minuteValue = g.get(Calendar.MINUTE);
             if ( minuteValue % shift.getInterval() == 0 ){
                 //cool
@@ -172,7 +137,60 @@ public class Punch {
             
             punchTime = g.getTimeInMillis();
         }
-        
+        else {
+
+            if ( (punchTime <= shiftStart.getTimeInMillis()) && (punchTime >= startInterval.getTimeInMillis()) ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
+                punchTime = shiftStart.getTimeInMillis();
+                this.ruleInvoked = "Shift Start";
+            }
+            else if ( (punchTime >= shiftStart.getTimeInMillis()) && (punchTime <= startGrace.getTimeInMillis()) ) { // punch is greater than start time but less than the grace period. Snap to start time.
+                punchTime = shiftStart.getTimeInMillis();
+                this.ruleInvoked = "Shift Start";
+            }
+            else if ( (punchTime >= startGrace.getTimeInMillis()) && (punchTime <= startDock.getTimeInMillis()) ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
+                punchTime = startDock.getTimeInMillis();
+                this.ruleInvoked = "Shift Dock";
+            }
+            else if ( (punchTime >= LunchStart.getTimeInMillis()) && (punchTime <= lunchStop.getTimeInMillis()) && this.punchtypeid == 0 ) {  
+                punchTime = LunchStart.getTimeInMillis();
+                lunchFlag = true;
+                this.ruleInvoked = "Lunch Start";
+            }
+            else if ( (punchTime <= lunchStop.getTimeInMillis()) && (punchTime >= LunchStart.getTimeInMillis()) && this.punchtypeid == 1 ) { 
+                punchTime = lunchStop.getTimeInMillis();
+                lunchFlag = true;
+                this.ruleInvoked = "Lunch Stop";
+            }
+            else if ( (punchTime <= stopGrace.getTimeInMillis()) && (punchTime >= stopDock.getTimeInMillis()) ) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
+                punchTime = stopDock.getTimeInMillis();
+                this.ruleInvoked = "Shift Dock";
+            }
+            else if ( (punchTime >= stopGrace.getTimeInMillis()) && (punchTime <= shiftStop.getTimeInMillis()) ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
+                punchTime = shiftStop.getTimeInMillis();
+                this.ruleInvoked = "Shift Stop";
+            }
+            else if ( (punchTime >= shiftStop.getTimeInMillis()) && (punchTime <= stopInterval.getTimeInMillis()) ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
+                punchTime = shiftStop.getTimeInMillis();
+                this.ruleInvoked = "Shift Stop";
+            }
+            else {
+
+                //Move to the nearest 15 minute interval.
+                int minuteValue = g.get(Calendar.MINUTE);
+                if ( minuteValue % shift.getInterval() == 0 ){
+                    //cool
+                }  
+                else if ( minuteValue % shift.getInterval() > shift.getInterval()/2 ) {
+                    g.set(Calendar.MINUTE, minuteValue + ( shift.getInterval() - minuteValue % shift.getInterval() ));  
+                }
+                else {
+                    g.set(Calendar.MINUTE, minuteValue - minuteValue % shift.getInterval());
+                }
+                this.ruleInvoked = "Interval Round";
+
+                punchTime = g.getTimeInMillis();
+            }
+        }
         this.adjustedtime = punchTime;
     }
     
