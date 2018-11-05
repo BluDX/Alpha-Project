@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package alpha.project;
+import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
@@ -59,6 +60,7 @@ public class Punch {
     private long adjustedtime;
     private int punchtypeid;
     private boolean lunchFlag = false;
+    private String ruleInvoked = "None";
     public Punch(Badge badge, int terminalid, int punchtypeid) {
         badgeid = badge.getId();
         this.terminalid = terminalid;
@@ -121,61 +123,54 @@ public class Punch {
         // for now just changing punchTime will do. Easy enough fix later.
         if ( punchTime <= shiftStart.getTimeInMillis() && punchTime >= startInterval.getTimeInMillis() ) { // punch is greater than the interval and less than start time: it is snapped to shift start.
             punchTime = shiftStart.getTimeInMillis();
+            this.ruleInvoked = "Shift Start";
         }
         else if ( punchTime >= shiftStart.getTimeInMillis() && punchTime <= startGrace.getTimeInMillis() ) { // punch is greater than start time but less than the grace period. Snap to start time.
             punchTime = shiftStart.getTimeInMillis();
+            this.ruleInvoked = "Shift Start";
         }
         else if ( punchTime >= startGrace.getTimeInMillis() && punchTime <= startDock.getTimeInMillis() ) { // punch is after the grace period and before the dock. Punch is shifted to the dock time.
             punchTime = startDock.getTimeInMillis();
+            this.ruleInvoked = "Shift Dock";
         }
         else if ( punchTime >= LunchStart.getTimeInMillis() && punchTime <= lunchStop.getTimeInMillis() && this.punchtypeid == 0 ) {  
             punchTime = LunchStart.getTimeInMillis();
             lunchFlag = true;
+            this.ruleInvoked = "Lunch Start";
         }
         else if ( punchTime <= lunchStop.getTimeInMillis() && punchTime >= LunchStart.getTimeInMillis() && this.punchtypeid == 1 ) { 
             punchTime = lunchStop.getTimeInMillis();
             lunchFlag = true;
+            this.ruleInvoked = "Lunch Stop";
         }
         else if ( punchTime <= stopGrace.getTimeInMillis() && punchTime >= stopDock.getTimeInMillis()) { // punch is less than the grace period for clocking out and is also bigger than the stop dock. Punch is adjusted to the dock 
             punchTime = stopDock.getTimeInMillis();
+            this.ruleInvoked = "Shift Dock";
         }
         else if ( punchTime >= stopGrace.getTimeInMillis() && punchTime <= shiftStop.getTimeInMillis() ) { // punch is greater than stop grace and less than shift stop. Adjust to the end of the shift.
             punchTime = shiftStop.getTimeInMillis();
+            this.ruleInvoked = "Shift Stop";
         }
         else if ( punchTime >= shiftStop.getTimeInMillis() && punchTime <= stopInterval.getTimeInMillis() ) { // punch is after the end of shift but before the stop interval. Move it to the end of the shift.
             punchTime = shiftStop.getTimeInMillis();
+            this.ruleInvoked = "Shift Stop";
         }
         else {
          
             //Move to the nearest 15 minute interval. Nothing comes to mind immediately and I want to grab food.
-            /*
-            
-            
-            else if (punchTime % shift.getInterval() == 0) {
-            adjusted.setTimeInMillis(original.getTimeInMillis());
-            eventData = "(None)";
-            
+            int minuteValue = g.get(Calendar.MINUTE);
+            if ( minuteValue % shift.getInterval() == 0 ){
+                //cool
+            }  
+            else if ( minuteValue % shift.getInterval() > shift.getInterval()/2 ) {
+                g.set(Calendar.MINUTE, minuteValue + ( shift.getInterval() - minuteValue % shift.getInterval() ));  
             }
-            
-            else if (modTime < 8) {
-            getAdjustedTimestamp().set(Calendar.MINUTE, roundedMin - modTime);
-            getAdjustedTimestamp().set(Calendar.SECOND, 0);
-          
-            event_data = "Interval Round";
-            
-            }
-            
-            
             else {
-            getAdjustedTimestamp().set(Calendar.MINUTE, (roundedMin + (shift.getInterval() - modTime)));
-            getAdjustedTimestamp().set(Calendar.SECOND, 0);
+                g.set(Calendar.MINUTE, minuteValue - minuteValue % shift.getInterval());
+            }
+            this.ruleInvoked = "Interval Round";
             
-            event_data = "Interval Round";
-            
-            
-            
-            
-            */
+            punchTime = g.getTimeInMillis();
         }
         
         this.adjustedtime = punchTime;
@@ -201,20 +196,46 @@ public class Punch {
         GregorianCalendar ots = new GregorianCalendar();
         ots.setTimeInMillis(originaltime);
         String msg;
+        SimpleDateFormat sdf = new SimpleDateFormat("E MM/dd/yyyy HH:mm:ss");
         switch (getPunchtypeid()) {
             case 1:
-                msg = "#" + badgeid + " CLOCKED IN: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " CLOCKED IN: " + sdf.format(ots.getTime());
               
                 break;
             case 0:
-                msg = "#" + badgeid + " CLOCKED OUT: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " CLOCKED OUT: " + sdf.format(ots.getTime());
                 break;
             default:
-                msg = "#" + badgeid + " TIMED OUT: " + ots.toZonedDateTime().format(DateTimeFormatter.ofPattern( "E MM/dd/uuuu HH:mm:ss" ));
+                msg = "#" + badgeid + " TIMED OUT: " + sdf.format(ots.getTime());
                 break;
         }
         
-        return msg.toUpperCase();
+        msg = msg.toUpperCase();
+        return msg;
+    }
+    
+    public String printAdjustedTimestamp() {
+        GregorianCalendar ats = new GregorianCalendar();
+        ats.setTimeInMillis(adjustedtime);
+        String msg;
+        SimpleDateFormat sdf = new SimpleDateFormat("E MM/dd/yyyy HH:mm:ss");
+        switch (getPunchtypeid()) {
+            case 1:
+                msg = "#" + badgeid + " CLOCKED IN: " + sdf.format(ats.getTime());
+              
+                break;
+            case 0:
+                msg = "#" + badgeid + " CLOCKED OUT: " + sdf.format(ats.getTime());
+                break;
+            default:
+                msg = "#" + badgeid + " TIMED OUT: " + sdf.format(ats.getTime());
+                break;
+        }
+        
+        msg = msg.toUpperCase();
+        msg += " (" + this.ruleInvoked + ")";
+        return msg;
+        
     }
 
     public int getId() {
