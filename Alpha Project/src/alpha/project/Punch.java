@@ -75,65 +75,89 @@ public class Punch {
         
         GregorianCalendar shiftStart = new GregorianCalendar();
         shiftStart.setTimeInMillis(this.originaltime);
-        shiftStart.set(Calendar.HOUR, shift.getShiftStartHour());
+        shiftStart.set(Calendar.HOUR_OF_DAY, shift.getShiftStartHour());
         shiftStart.set(Calendar.MINUTE, shift.getShiftStartMinute());
         shiftStart.set(Calendar.SECOND, 0);
     
         GregorianCalendar shiftStop = new GregorianCalendar();
         shiftStop.setTimeInMillis(this.originaltime);
-        shiftStop.set(Calendar.HOUR, shift.getShiftStopHour());
+        shiftStop.set(Calendar.HOUR_OF_DAY, shift.getShiftStopHour());
         shiftStop.set(Calendar.MINUTE, shift.getShiftStopMinute());
         shiftStop.set(Calendar.SECOND, 0);
     
         GregorianCalendar LunchStart = new GregorianCalendar();
         LunchStart.setTimeInMillis(this.originaltime);
-        LunchStart.set(Calendar.HOUR, shift.getLunchStartHour());
+        LunchStart.set(Calendar.HOUR_OF_DAY, shift.getLunchStartHour());
         LunchStart.set(Calendar.MINUTE, shift.getLunchStartMinute());
         LunchStart.set(Calendar.SECOND, 0);
    
         GregorianCalendar lunchStop = new GregorianCalendar();
         lunchStop.setTimeInMillis(this.originaltime);
-        lunchStop.set(Calendar.HOUR, shift.getLunchStopHour());
+        lunchStop.set(Calendar.HOUR_OF_DAY, shift.getLunchStopHour());
         lunchStop.set(Calendar.MINUTE, shift.getLunchStopMinute());
         lunchStop.set(Calendar.SECOND, 0);
     
-        GregorianCalendar startInterval = shiftStart;
-        startInterval.roll(Calendar.MINUTE, -shift.getInterval());
+        GregorianCalendar startInterval = new GregorianCalendar();
+        startInterval.setTimeInMillis(shiftStart.getTimeInMillis());
+        startInterval.add(Calendar.MINUTE, -shift.getInterval());
         
-        GregorianCalendar startGrace = shiftStart;
-        startGrace.roll(Calendar.MINUTE, shift.getGracePeriod());
+        GregorianCalendar startGrace = new GregorianCalendar();
+        startGrace.setTimeInMillis(shiftStart.getTimeInMillis());
+        startGrace.add(Calendar.MINUTE, shift.getGracePeriod());
         
-        GregorianCalendar startDock = shiftStart;
-        startDock.roll(Calendar.MINUTE, shift.getDock());
+        GregorianCalendar startDock = new GregorianCalendar();
+        startDock.setTimeInMillis(shiftStart.getTimeInMillis());
+        startDock.add(Calendar.MINUTE, shift.getDock());
         
-        GregorianCalendar stopDock = shiftStop;
-        stopDock.roll(Calendar.MINUTE, -shift.getDock());
+        GregorianCalendar stopDock = new GregorianCalendar();
+        stopDock.setTimeInMillis(shiftStop.getTimeInMillis());
+        stopDock.add(Calendar.MINUTE, -shift.getDock());
         
-        GregorianCalendar stopGrace = shiftStop;
-        stopGrace.roll(Calendar.MINUTE, -shift.getGracePeriod());
+        GregorianCalendar stopGrace = new GregorianCalendar();
+        stopGrace.setTimeInMillis(shiftStop.getTimeInMillis());
+        stopGrace.add(Calendar.MINUTE, -shift.getGracePeriod());
         
-        GregorianCalendar stopInterval = shiftStop;
-        stopInterval.roll(Calendar.MINUTE, shift.getInterval());
+        GregorianCalendar stopInterval = new GregorianCalendar();
+        stopInterval.setTimeInMillis(shiftStop.getTimeInMillis());
+        stopInterval.add(Calendar.MINUTE, shift.getInterval());
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("E MM/dd/yyyy HH:mm:ss");
+        
+        System.out.println("shiftStart: " + shiftStart.getTimeInMillis() + " " + sdf.format(shiftStart.getTime())); 
+        System.out.println("shiftStop: " + shiftStop.getTimeInMillis() + " " + sdf.format(shiftStop.getTime())); 
+        System.out.println("LunchStart: " + LunchStart.getTimeInMillis() + " " + sdf.format(LunchStart.getTime())); 
+        System.out.println("lunchStop: " + lunchStop.getTimeInMillis() + " " + sdf.format(lunchStop.getTime()));
+        System.out.println("startInterval: " + startInterval.getTimeInMillis() + " " + sdf.format(startInterval.getTime())); 
+        System.out.println("startGrace: " + startGrace.getTimeInMillis() + " " + sdf.format(startGrace.getTime())); 
+        System.out.println("startDock: " + startDock.getTimeInMillis() + " " + sdf.format(startDock.getTime())); 
+        System.out.println("stopDock: " + stopDock.getTimeInMillis() + " " + sdf.format(stopDock.getTime())); 
+        System.out.println("stopGrace: " + stopGrace.getTimeInMillis() + " " + sdf.format(stopGrace.getTime())); 
+        System.out.println("stopInterval: " + stopInterval.getTimeInMillis() + " " + sdf.format(stopInterval.getTime())); 
+        
         
         GregorianCalendar g = new GregorianCalendar();
         g.setTimeInMillis(this.originaltime);
         g.set(Calendar.SECOND, 0);
         long punchTime = g.getTimeInMillis();
+        System.out.println("punchTime: " + punchTime + " " + sdf.format(g.getTime())); 
+        System.out.println();
         // I think I should be using a setter to change the punch's adjusted timestamp but that setter doesn't exist. I think Snellen told me to delete it. Maybe another way??
         // for now just changing punchTime will do. Easy enough fix later.
         if ( g.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || g.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ) {
             //Move to the nearest 15 minute interval.
             int minuteValue = g.get(Calendar.MINUTE);
             if ( minuteValue % shift.getInterval() == 0 ){
-                //cool
+                this.ruleInvoked = "None"; 
             }  
-            else if ( minuteValue % shift.getInterval() > shift.getInterval()/2 ) {
+            else if ( minuteValue % shift.getInterval() >= shift.getInterval()/2 ) {
                 g.set(Calendar.MINUTE, minuteValue + ( shift.getInterval() - minuteValue % shift.getInterval() ));  
+                this.ruleInvoked = "Interval Round";
             }
             else {
                 g.set(Calendar.MINUTE, minuteValue - minuteValue % shift.getInterval());
+                this.ruleInvoked = "Interval Round";
             }
-            this.ruleInvoked = "Interval Round";
+            
             
             punchTime = g.getTimeInMillis();
         }
@@ -178,15 +202,17 @@ public class Punch {
                 //Move to the nearest 15 minute interval.
                 int minuteValue = g.get(Calendar.MINUTE);
                 if ( minuteValue % shift.getInterval() == 0 ){
-                    //cool
+                    this.ruleInvoked = "None";
                 }  
-                else if ( minuteValue % shift.getInterval() > shift.getInterval()/2 ) {
+                else if ( minuteValue % shift.getInterval() >= shift.getInterval()/2 ) { //this rounds up when it is 7, but shouldn't it round down??
                     g.set(Calendar.MINUTE, minuteValue + ( shift.getInterval() - minuteValue % shift.getInterval() ));  
+                    this.ruleInvoked = "Interval Round";
                 }
                 else {
                     g.set(Calendar.MINUTE, minuteValue - minuteValue % shift.getInterval());
+                    this.ruleInvoked = "Interval Round";
                 }
-                this.ruleInvoked = "Interval Round";
+                
 
                 punchTime = g.getTimeInMillis();
             }
