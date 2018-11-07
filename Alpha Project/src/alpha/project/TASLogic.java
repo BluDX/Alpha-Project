@@ -4,12 +4,19 @@
  * and open the template in the editor.
  */
 package alpha.project;
+import java.util.ArrayList;
 
 /**
  *
  * @author Adam
- * Last updated: 10/4/18 - Left empty for feature 1
+ * 
  */
 public class TASLogic {
-    
+    public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
+        int totalMinutes = 0;
+        
+        
+        
+        return totalMinutes;
+    }
 }
