@@ -291,7 +291,10 @@ public class Punch {
     public long getOriginaltimestamp() {
         return originaltime;
     }
-
+    
+    public long getAdjustedtimestamp() {
+        return adjustedtime;
+    }
     public void setOriginaltime(long originaltime) {
         this.originaltime = originaltime;
     }
