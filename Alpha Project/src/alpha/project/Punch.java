@@ -122,7 +122,7 @@ public class Punch {
         stopInterval.add(Calendar.MINUTE, shift.getInterval());
         
         SimpleDateFormat sdf = new SimpleDateFormat("E MM/dd/yyyy HH:mm:ss");
-        
+        /*
         System.out.println("shiftStart: " + shiftStart.getTimeInMillis() + " " + sdf.format(shiftStart.getTime())); 
         System.out.println("shiftStop: " + shiftStop.getTimeInMillis() + " " + sdf.format(shiftStop.getTime())); 
         System.out.println("LunchStart: " + LunchStart.getTimeInMillis() + " " + sdf.format(LunchStart.getTime())); 
@@ -133,14 +133,16 @@ public class Punch {
         System.out.println("stopDock: " + stopDock.getTimeInMillis() + " " + sdf.format(stopDock.getTime())); 
         System.out.println("stopGrace: " + stopGrace.getTimeInMillis() + " " + sdf.format(stopGrace.getTime())); 
         System.out.println("stopInterval: " + stopInterval.getTimeInMillis() + " " + sdf.format(stopInterval.getTime())); 
-        
+        */
         
         GregorianCalendar g = new GregorianCalendar();
         g.setTimeInMillis(this.originaltime);
         g.set(Calendar.SECOND, 0);
         long punchTime = g.getTimeInMillis();
+        /*
         System.out.println("punchTime: " + punchTime + " " + sdf.format(g.getTime())); 
         System.out.println();
+        */
         // I think I should be using a setter to change the punch's adjusted timestamp but that setter doesn't exist. I think Snellen told me to delete it. Maybe another way??
         // for now just changing punchTime will do. Easy enough fix later.
         if ( (punchTime <= shiftStart.getTimeInMillis()) && (punchTime >= startInterval.getTimeInMillis()) && !(g.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || g.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) { // punch is greater than the interval and less than start time: it is snapped to shift start.

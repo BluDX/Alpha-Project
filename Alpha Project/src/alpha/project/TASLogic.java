@@ -21,12 +21,13 @@ public class TASLogic {
        
          //Declare variables
         
-        int totalMinutes;
+         
+        long totalMinutes = 0;
         long shiftStart;
         long shiftEnd;
         long lunchStart;
         long lunchEnd;
-        
+        String debug = "hi";
         /*Get times from dailypunchlist and check to see if they took a lunch*/
 	
 	//This is if they clocked out for a lunch
@@ -38,7 +39,9 @@ public class TASLogic {
             lunchStart = dailypunchlist.get(1).getOriginaltimestamp();
             lunchEnd = dailypunchlist.get(2).getOriginaltimestamp();
             
-            totalMinutes = (shiftEnd - shiftStart - 1800000) / 60000;
+            totalMinutes = ((shiftEnd - shiftStart) / 60000) - 30;
+            //System.out.println((shiftEnd - shiftStart) / 60000); Maybe subtract lunchend - lunchstart from totalminutes now??
+            debug = "4";
         }
         
         //This is if they did not clock out for a lunch
@@ -51,17 +54,20 @@ public class TASLogic {
             totalMinutes = (shiftEnd - shiftStart) / 60000;
             
             //This checks to see if they worked the correct amount of time to get a lunch
-            
-            if(totalMinutes >= 360) 
-               
-                totalMinutes = totalMinutes - 1800000;
+            debug = "2"; 
+            if(totalMinutes >= 540) {
+                totalMinutes = totalMinutes - 30;
+                debug = "2 and lunch deducted";
+            }
         }
         
+        System.out.println(totalMinutes);
         
+        int minutes = (int)totalMinutes;
         
+        System.out.println(minutes);
         
-        
-        
-        return totalMinutes;
+        System.out.println(debug + "\n");
+        return minutes;
     }
 }
