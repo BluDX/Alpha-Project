@@ -298,7 +298,9 @@ public class Punch {
     public void setOriginaltime(long originaltime) {
         this.originaltime = originaltime;
     }
-
+    public String getPunchData() {
+        return this.ruleInvoked;
+    }
 
 
     public int getPunchtypeid() {

@@ -4,12 +4,13 @@
  * and open the template in the editor.
  */
 package alpha.project;
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.GregorianCalendar;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-
+import java.util.ArrayList;
+import java.util.HashMap;
+import org.json.simple.*;
 
 /**
  *
@@ -18,7 +19,7 @@ import java.util.Calendar;
  */
 public class TASLogic {
     public static int calculateTotalMinutes(ArrayList<Punch> dailypunchlist, Shift shift) {
-       
+    
          //Declare variables
         
          
@@ -76,5 +77,36 @@ public class TASLogic {
         
         //System.out.println(debug + "\n");
         return minutes;
+    }
+    
+    public static String getPunchListAsJSON(ArrayList<Punch> dailypunchlist) {
+        
+        /* Create ArrayList Object */
+        ArrayList<HashMap<String, String>> jsonData = new ArrayList<HashMap<String, String>>();
+        //ArrayList<HashMap<string, string="">> jsonData;
+        
+        for (Punch punch : dailypunchlist) {
+            
+            /* Create HashMap Object (one for every Punch!) */
+            //HashMap<string, string="">  punchData = new HashMap<>();
+            HashMap<String, String>  punchData = new HashMap<>();
+            /* Add Punch Data to HashMap */
+            punchData.put("id", String.valueOf(punch.getId()));
+            /* ... continue in the same way with the remaining Punch data ...*/
+            
+            punchData.put("badgeid", String.valueOf(punch.getBadgeid()));
+            punchData.put("terminalid", String.valueOf(punch.getTerminalid()));
+            punchData.put("punchtypeid", String.valueOf(punch.getPunchtypeid()));
+            punchData.put("punchdata", String.valueOf(punch.getPunchData()));
+            punchData.put("originaltimestamp", String.valueOf(punch.getOriginaltimestamp()));
+            punchData.put("adjustedtimestamp", String.valueOf(punch.getAdjustedtimestamp()));
+            
+            /* Append HashMap to ArrayList */
+            jsonData.add(punchData);
+        }
+
+        String json = JSONValue.toJSONString(jsonData);
+        
+        return json;
     }
 }

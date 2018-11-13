@@ -95,7 +95,7 @@ public class Feature5 {
         
         /* Expected JSON Data */
         
-        String expectedJSON = "[{\"punchdata\":\"Shift Start\",\"originaltimestamp\":\"1537289973000\",\"badgeid\":\"08D01475\",\"adjustedtimestamp\":\"1537290000000\",\"punchtypeid\":\"1\",\"terminalid\":\"104\",\"id\":\"4943\"},{\"punchdata\":\"None\",\"originaltimestamp\":\"1537324227000\",\"badgeid\":\"08D01475\",\"adjustedtimestamp\":\"1537324227000\",\"punchtypeid\":\"0\",\"terminalid\":\"104\",\"id\":\"5004\"}]";
+        String expectedJSON = "[{\"punchdata\":\"Shift Start\",\"originaltimestamp\":\"1537289973000\",\"badgeid\":\"08D01475\",\"adjustedtimestamp\":\"1537290000000\",\"punchtypeid\":\"1\",\"terminalid\":\"104\",\"id\":\"4943\"},{\"punchdata\":\"None\",\"originaltimestamp\":\"1537324227000\",\"badgeid\":\"08D01475\",\"adjustedtimestamp\":\"1537324200000\",\"punchtypeid\":\"0\",\"terminalid\":\"104\",\"id\":\"5004\"}]";
         
         ArrayList<HashMap<String, String>> expected = (ArrayList)JSONValue.parse(expectedJSON);
 		

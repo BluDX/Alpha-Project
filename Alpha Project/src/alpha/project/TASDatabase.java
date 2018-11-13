@@ -72,6 +72,7 @@ public class TASDatabase {
                     p = new Punch(b, terminalId, punchTypeId);
                     //set original time to whatever it was with setter
                     p.setOriginaltime(time);
+                    p.setId(Id);
                 }
             }
         }catch(SQLException ex){
