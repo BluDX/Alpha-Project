@@ -19,7 +19,6 @@ public class TASDatabase {
     private Statement stmt;
     private ResultSet result;
     
-    //CONSTRUCTOR
     public TASDatabase() {
         
         try{
@@ -68,9 +67,7 @@ public class TASDatabase {
                     int punchTypeId = rs.getInt("punchtypeid");
                     Badge b = getBadge(badgeId);
                     long time = rs.getLong("ts");
-                    //Need to create a punch and to create a punch I need a badge
                     p = new Punch(b, terminalId, punchTypeId);
-                    //set original time to whatever it was with setter
                     p.setOriginaltime(time);
                     p.setId(Id);
                 }
@@ -84,10 +81,8 @@ public class TASDatabase {
         
         Badge b = null;
         try(Statement st = conn.createStatement()){
-        //Querys for the corresponding badge, creates the badge object, then returns it
          String query = "SELECT * FROM badge WHERE id = " + "\"" + id + "\"";
-         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         //pstUpdate.setString(1, id);
+
          ResultSet rs = st.executeQuery(query);
 
          while(rs.next()){
@@ -110,8 +105,6 @@ public class TASDatabase {
         Shift s = null;
        try(Statement st = conn.createStatement()){
          String query = "SELECT * FROM shift WHERE id = " + Integer.toString(id);
-         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         //pstUpdate.setString(1, Integer.toString(id));
          ResultSet rs = st.executeQuery(query);
          
          while(rs.next()){
@@ -136,16 +129,15 @@ public class TASDatabase {
         }catch(SQLException ex){
             Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //Querys for the corresponding shift, creates the object, returns it
+
     return s;
     }
     public Shift getShift(Badge badge) {
         Shift s = null;
-        int shiftid = 0; //maybe shouldnt initialize to 0 - ask later
+        int shiftid = 0;
        try(Statement st = conn.createStatement()){
          String query = "SELECT * FROM employee WHERE badgeid = " + "\"" + badge.getId() + "\"";
-         //PreparedStatement pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         //pstUpdate.setString(1, badge.getId());
+
          ResultSet rs = st.executeQuery(query);
          
          while(rs.next()){
@@ -153,8 +145,7 @@ public class TASDatabase {
          }
          
          query = "SELECT * FROM shift WHERE id = " + Integer.toString(shiftid);
-         //pstUpdate = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-         //pstUpdate.setString(1, Integer.toString(shiftid));
+
          rs = st.executeQuery(query);
          while(rs.next()){
                     int Id = rs.getInt("id");
@@ -177,53 +168,43 @@ public class TASDatabase {
         }catch(SQLException ex){
             Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //Querys for the corresponding shift, creates the object, returns it
+ 
     return s;
     }
     
     
     public int insertPunch(Punch p){
 	
-	//Extract data from Punch
-	
 	int terminalID = p.getTerminalid();
 	int punchTypeID = p.getPunchtypeid();
 	int ID = p.getId();
         String badgeID = p.getBadgeid();
-        //Timestamp s = new Timestamp(p.getOriginaltimestamp());
-        //Timestamp s = new Timestamp((new GregorianCalendar()).getTimeInMillis());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         GregorianCalendar s = new GregorianCalendar();
         s.setTimeInMillis(p.getOriginaltimestamp());
         
 	try{
-		//Initialize values that will be used to return the punchID and check if the query was exexcuted
 		
 		int punchID;
             	int Results;
 		ResultSet rst;		
 
-		// the mysql insert statement
       	
 		String query = " insert into punch (terminalid, badgeid, originaltimestamp, punchtypeid)" + " values (?, ?, ?, ?)";
 
-		// create the mysql insert preparedstatement
       	
 		PreparedStatement preparedStmt = conn.prepareStatement(query,PreparedStatement.RETURN_GENERATED_KEYS);
-
-		//replaces the question marks in the query with values		
+	
 
       		preparedStmt.setInt(1, terminalID);
       		preparedStmt.setString(2, badgeID);
       		preparedStmt.setString(3, sdf.format(s.getTime()));
       		preparedStmt.setInt(4, punchTypeID);
 
-		//executes the query and closes it
 
 		Results = preparedStmt.executeUpdate();
 		
-
-		//Check to see if punch was properly inserted		
+	
 
 		if(Results == 1){
 			rst = preparedStmt.getGeneratedKeys();
@@ -234,8 +215,7 @@ public class TASDatabase {
 		}
 	}
 	catch(SQLException ex){
-	
-	//I do not know what this error is for but it was on the hints in NetBeans
+
             
 		Logger.getLogger(TASDatabase.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -261,7 +241,7 @@ public class TASDatabase {
                 queryTime.setTimeInMillis(rst.getLong("time"));
                 if(queryTime.get(Calendar.DAY_OF_YEAR) == dayInQuestion.get(Calendar.DAY_OF_YEAR) && queryTime.get(Calendar.YEAR) == dayInQuestion.get(Calendar.YEAR)) {
                     Punch p = getPunch(rst.getInt("id"));
-                    punchList.add(p); //This MIGHT work for getting all the punches from a given badge on a given day. Still need to find a way to add the first punch from the following day. 
+                    punchList.add(p); 
                 }
             }
             rst = preparedStmt.executeQuery();
@@ -271,7 +251,7 @@ public class TASDatabase {
                 queryTime.setTimeInMillis(rst.getLong("time"));
                 if(queryTime.get(Calendar.DAY_OF_YEAR) == dayInQuestion.get(Calendar.DAY_OF_YEAR) && queryTime.get(Calendar.YEAR) == dayInQuestion.get(Calendar.YEAR)) {
                     Punch p = getPunch(rst.getInt("id"));
-                    punchList.add(p); //Hopefully this accurately adds the first punch of the following day. 
+                    punchList.add(p);
                 }
             }
             

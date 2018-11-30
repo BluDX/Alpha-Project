@@ -6,30 +6,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.time.LocalDate;
 
-/**
- *
-* @author Amber
-* timestamp fields used for punch date and time, time fields for shift/lunch start/stop
-* UNIX_TIMESTAMP
-* value returned by MySQL should be multiplied by 1000
-* TODO: toString, gregorian calendar conversion
-* need to create calendar object for all longs?
-* description, shiftStart, shiftStop, interval, graceperiod, dock, lunchstart, lunchstop, lunchdeduct
-* added: lunchLength, shiftLength, shiftID
-* lunch/shiftlength replaced with elapsed time
-* 
-* Snellen badge example:
-* String id = resultset.getString();
-* String desc = resultset.getstring(2);
-* Badge b = new Badge (id, desc)
-* 
-* gc.setTimeInMillis(ts);
-* SimpleDateFormat
-* Date d = gc.getTime(); > would then be an input for sdf;
-* sdf.format(d);
-* 
-* change timestamps to localTime; isBefore and isAfter (compare local times to see which occurs before or after). ß
-*/  
 
 public class Shift {
     private int id, interval, gracePeriod, dock, lunchDeduct;
@@ -51,7 +27,6 @@ public class Shift {
         this.lunchStop = lunchStop;
     }
     
-    // getters and setters
 
     public int getId() {
         return id;
@@ -140,29 +115,23 @@ public class Shift {
         g.setTimeInMillis(lunchStop.getTime());
         return g.get(Calendar.MINUTE);
     }
-    // long cannot be converted to greg calendar; should be string
-    // 60 * 1000
-    
-    // get times
+
     private long getElapsedTime(Time s, Time e){
         Calendar startCal = GregorianCalendar.getInstance();
         Calendar endCal = GregorianCalendar.getInstance();
         startCal.setTimeInMillis(s.getTime());
         endCal.setTimeInMillis(e.getTime());
         
-        // calculate times for lunch and shift... / 60 * 1000 to convert
         long start, end;
         start = startCal.getTimeInMillis();
         end = endCal.getTimeInMillis();
         return (end - start) / (60 * 1000);
     }
 
-    //formatting for output
     @Override
     public String toString() {
         
-        // Shift 1: 07:00 - 15:30 (510 minutes); Lunch: 12:00 - 12:30 (30 minutes)
-        // Pretty cluttered - might use different method
+
         String data = "";
         String startTime = (new SimpleDateFormat("HH:mm")).format(shiftStart.getTime());
         String stopTime = (new SimpleDateFormat("HH:mm")).format(shiftStop.getTime());
